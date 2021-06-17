@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include "parser.h"
+#include "../errors/errors.h"
 
 #define AS_EXT_STR ".as"
 
@@ -23,6 +24,8 @@ char **parseCommandLine(int argc, char *argv[]) {
         if (hasValidExtension(currArg)) {
             validArgs[j] = currArg;
             j++;
+        } else {
+            printErrorMessage(INVALID_FNAME, currArg);
         }
     }
 

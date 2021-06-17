@@ -1,13 +1,15 @@
 CC = gcc
 FLAGS = -Wall -ansi -pedantic
-OBJECTS = main.o parser.o
-HEADERS = parser.h
+OBJECTS = main.o parser/parser.o errors/errors.o
+HEADERS = parser/parser.h errors/errors.h
+TARGET = assembler
 
-assembler: $(OBJECTS) $(HEADERS)
-	$(CC) $(FLAGS) $(OBJECTS) -o assembler
+$(TARGET): $(OBJECTS) $(HEADERS)
+	$(CC) $(FLAGS) $(OBJECTS) -o $(TARGET)
 
 %.o: %.c
-	$(CC) $(FLAGS) -c $<
+	$(CC) $(FLAGS) -c $< -o $@
 
 clean:
 	rm -f *.o
+	rm -f */*.o
