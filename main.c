@@ -1,33 +1,49 @@
 #include <stdio.h>
-#include "./parser/parser.h"
+#include <stdlib.h>
+
 #include "./errors/errors.h"
+#include "./parser/parser.h"
+
+#define MAX_COMMAND_LEN 82
 
 int main(int argc, char *argv[]) {
     int i;
+    int j;
+    /* For temporary temp storage */
+    char temp[MAX_COMMAND_LEN];
     /* Get an array of valid file name strings */
-    char **args = parseCommandLine(argc, argv);
-    
+    char **filenames = parseCommandLineArgs(argc, argv);
+    if (filenames == NULL) return 0;
+
     /* Iterate over all valid file names */
-    for (i=0; args[i]; i++) {
-        FILE *srcFile = fopen(args[i], "r");
+    for (i = 0; *(filenames + i); i++) {
+        FILE *srcFile = fopen(filenames[i], "r");
         if (!srcFile) {
             /* Error, skip to the next file name */
-            printErrorMessage(FILE_OPEN_FAIL, args[i]);
+            printErrorMessage(FILE_OPEN_FAIL, filenames[i]);
             continue;
         }
 
-        /* Iterate over srcFile twice */
-        while(!feof(srcFile)) {
-            putchar(getc(srcFile));
-        }
-        fseek(srcFile, 0, SEEK_SET);
-        while(!feof(srcFile)) {
-            putchar(getc(srcFile));
+        /* PHASE 1 */
+        j = 1;
+        while (fgets(temp, MAX_COMMAND_LEN, srcFile) != NULL) {
+            command *cmd = genCommand();
+            parseCommand(cmd, temp);
+
+            printf("%d\t", j++);
+            printf("%s\n", cmd->label);
+            freeCommand(cmd);
         }
 
+        /* PHASE 2 */
 
+        /* CLEANUP */
         fclose(srcFile);
+
+        /*Generate output files if no errors occurred*/
     }
+
+    free(filenames);
 
     return 0;
 }

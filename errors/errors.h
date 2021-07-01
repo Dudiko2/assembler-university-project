@@ -3,7 +3,8 @@
 
 typedef enum errorMessage {
     INVALID_FNAME,
-    FILE_OPEN_FAIL
+    FILE_OPEN_FAIL,
+    INVALID_LABEL
 } errorMessage;
 
 void printErrorMessage(errorMessage msgType, char *str);
