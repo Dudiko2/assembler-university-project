@@ -1,7 +1,7 @@
 CC = gcc
 FLAGS = -Wall -ansi -pedantic -g
-OBJECTS = main.o parser/parser.o errors/errors.o
-HEADERS = parser/parser.h errors/errors.h
+OBJECTS = main.o parser/parser.o io/io.o operations/operations.o commands/commands.o utils/utils.o
+HEADERS = parser/parser.h io/io.h operations/operations.h commands/commands.h utils/utils.h
 TARGET = assembler
 
 $(TARGET): $(OBJECTS) $(HEADERS)

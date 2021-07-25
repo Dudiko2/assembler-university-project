@@ -5,133 +5,112 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "../errors/errors.h"
+#include "../io/io.h"
+#include "../operations/operations.h"
+#include "../utils/utils.h"
 
-/* Checks if an argument string has a valid extension and returns 1 (true) or 0 (false) accordingly */
-static unsigned int hasValidExtension(char *str);
+/*returns whether the characters in LABEL are allowed*/
+static int validLabelChars(char *label, int len);
 
-char **parseCommandLineArgs(int argc, char *argv[]) {
-    int i;
-    int j;
-    char **validArgs;
-
-    if (argc < 2) return NULL;
-    validArgs = calloc(argc, sizeof(char *));
-
-    for (i = 1, j = 0; i < argc; i++) {
-        char *currArg = argv[i];
-
-        if (hasValidExtension(currArg)) {
-            validArgs[j] = currArg;
-            j++;
-        } else {
-            printErrorMessage(INVALID_FNAME, currArg);
-        }
-    }
-
-    return validArgs;
-}
-
-static unsigned int hasValidExtension(char *str) {
-    int i;
-    int pos = -1; /*position of the dot, initialized as invalid*/
-
-    /*finds the last dot, if exists*/
-    for (i = 0; str[i] != '\0'; i++) {
-        if (str[i] == '.') pos = i;
-    }
-
-    return (pos > -1 && strcmp(str + pos, AS_EXT_STR) == 0);
-}
-
-/*parseCommand*/
-/* - parseLabel*/
-/* - parseOperator*/
-/* - parseOperands*/
-
-command *genCommand() {
-    command *cmd = malloc(sizeof(command));
-    cmd->label = calloc(80, sizeof(char));
-    cmd->op = calloc(80, sizeof(char));
-    cmd->arguments = calloc(10, sizeof(char *));
-
-    return cmd;
-}
-
-void freeCommand(command *cmd) {
-    free(cmd->label);
-    free(cmd->op);
-    free(cmd->arguments);
-    free(cmd);
-}
-
-int parseCommand(command *parsed, char *cmdStr) {
-    int statusCode;
-    char *newStr;
-    newStr = calloc(strlen(cmdStr), sizeof(char));
+Command *parseCommand(char *cmdStr) {
+    char error = 0;
+    char *trimmed;
+    Command *cmd = newCommand();
 
     /*
     should move to a (yet to be written) parseLine
     that parses every line of the source code, not just cmd's
     */
-    trim(newStr, cmdStr);
+    trimmed = trim(cmdStr);
 
-    statusCode = parseLabel(parsed->label, newStr);
-    if (statusCode < 0) {
-        printErrorMessage(INVALID_LABEL, newStr);
-        return statusCode;
+    /*nothing to parse */
+    if (isEmptyStr(trimmed)) {
+        free(trimmed);
+        freeCommand(cmd);
+        return NULL;
     }
 
-    free(newStr);
+    cmd->label = parseLabel(trimmed);
 
-    return 1;
+    if (cmd->label == NULL) {
+        printErrorMessage(INVALID_LABEL, trimmed);
+        error = 1;
+    }
+
+    free(trimmed);
+
+    if (error) {
+        freeCommand(cmd);
+        return NULL;
+    }
+
+    return cmd;
 }
 
-int parseLabel(char *dest, char *cmdStr) {
-    /*UNDONE*/
-
+char *parseLabel(char *cmdStr) {
+    /*for looping and storing the length of the label*/
     int i;
-    int j;
-    int maxLen;
+    /*length of cmdStr*/
+    int len;
+    int error = 0;
+    /*aux variable for chars*/
     char c;
+    /*store label, if exists, here*/
+    char *label = calloc(LABEL_MAX_LEN, sizeof(char));
 
-    maxLen = strlen(cmdStr);
+    len = strlen(cmdStr);
 
     for (i = 0; (c = cmdStr[i]); i++) {
         if (c == ':') {
-            if (i == 0)
-                return -1;
-            else
+            if (i == 0) {
+                /*print invalid*/
+                free(label);
+                return NULL;
+            } else
                 break;
         }
     }
 
-    if (i > 0 && i < maxLen) {
-        for (j = 0; j < i; j++) {
-            /*assuming cmdStr was trimmed before this function was called*/
-            if (isspace(cmdStr[j]))
-                return -1;
+    if (i < len) {
+        /*label too long*/
+        if (i > LABEL_MAX_LEN) {
+            /*print too long*/
+            free(label);
+            return NULL;
         }
+
+        strncpy(label, cmdStr, i);
+
+        /*look for invalid chars*/
+        error = !validLabelChars(label, i) ? 1 : error;
+
         /*make sure here the label is not a reserved keyword*/
-        strncpy(dest, cmdStr, i);
-        return i;
+        error = isKeyword(label) ? 1 : error;
+
+        if (error) {
+            free(label);
+            return NULL;
+        }
+
+        return label;
     }
 
-    return 0;
+    /*return empty*/
+    return label;
 }
 
-char *trim(char *dest, char *str) {
-    int len = strlen(str);
-    int left;
-    int right;
+static int validLabelChars(char *label, int len) {
+    int i;
+    char c;
 
-    for (left = 0; isspace(str[left]); left++)
-        ;
-    for (right = len; isspace(str[right]); right--)
-        ;
+    for (i = 0; i < len; i++) {
+        c = label[i];
+        if (i == 0 && !(isalpha(c))) {
+            return 0;
+        } else if (!isalnum(c)) {
+            return 0;
+        }
+    }
 
-    if (left >= right)
-        return NULL;
-
-    return strncpy(dest, str + left, right - left - 1);
+    return 1;
 }
