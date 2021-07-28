@@ -4,6 +4,7 @@
 #include "./io/io.h"
 #include "./operations/operations.h"
 #include "./parser/parser.h"
+#include "./symbols/symbols.h"
 
 #define MAX_COMMAND_LEN 82
 
