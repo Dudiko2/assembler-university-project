@@ -33,6 +33,11 @@ static Operation table[] = {
 };
 
 int isKeyword(char* str) {
+    return isCodeOperation(str);
+    /*add isDataOperation*/
+}
+
+int isCodeOperation(char* str) {
     int i;
     for (i = 0; i < 27; i++) {
         if (strcmp(str, table[i].name) == 0)

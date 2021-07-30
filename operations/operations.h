@@ -12,5 +12,6 @@ returns whether STR is a reserved keyword
 TODO: add guidance commands
 */
 int isKeyword(char *str);
+int isCodeOperation(char *str);
 
 #endif
