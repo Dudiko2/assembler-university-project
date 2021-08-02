@@ -8,7 +8,9 @@ struct Node {
     Node *next;
 };
 
+/*takes a pointer to some data and wraps it inside a node*/
 Node *nodify(void *ptrData);
+/*takes a ref to the head of a list (ptrHead) and a pointer to some data, then puts a new node containing ptrData as the head*/
 void insertInfront(Node **ptrHead, void *ptrData);
 /*
 returns a new copy of str minus the spaces surronding it.
