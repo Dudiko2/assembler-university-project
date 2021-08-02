@@ -6,14 +6,9 @@ Command *newCommand() {
     Command *cmd = malloc(sizeof(Command));
     if (cmd == NULL) return NULL;
 
-    cmd->label = calloc(80, sizeof(char));
-    cmd->op = calloc(80, sizeof(char));
-    cmd->arguments = calloc(10, sizeof(char *));
-
-    if (cmd->label == NULL || cmd->op == NULL || cmd->arguments == NULL) {
-        freeCommand(cmd);
-        return NULL;
-    }
+    cmd->label = NULL;
+    cmd->op = NULL;
+    cmd->arguments = NULL;
 
     return cmd;
 }

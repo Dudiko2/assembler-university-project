@@ -4,13 +4,33 @@
 #include <stdlib.h>
 #include <string.h>
 
+Node *nodify(void *ptrData) {
+    Node *newNode = malloc(sizeof(Node));
+    if (newNode == NULL)
+        return NULL;
+
+    newNode->data = ptrData;
+    newNode->next = NULL;
+
+    return newNode;
+}
+
+void insertInfront(Node **ptrHead, void *ptrData) {
+    Node *node;
+
+    node = nodify(ptrData);
+    node->next = (*ptrHead);
+
+    (*ptrHead) = node;
+}
+
 char *trim(char *str) {
     int len = strlen(str);
     int left;
     int right;
     char *newStr;
 
-    newStr = calloc(len, sizeof(char));
+    newStr = calloc(len + 1, sizeof(char));
 
     for (left = 0; isspace(str[left]); left++)
         ;
