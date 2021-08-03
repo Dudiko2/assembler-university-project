@@ -2,7 +2,7 @@
 
 #include <string.h>
 /*table of operations used for validation purposes*/
-static Operation table[] = {
+static CodeOperation codeTable[] = {
     {"add", 0, 1},
     {"sub", 0, 2},
     {"and", 0, 3},
@@ -32,15 +32,33 @@ static Operation table[] = {
     {"stop", 63},
 };
 
+static DataOperation dataTable[] = {
+    {"db"},
+    {"dw"},
+    {"dh"},
+    {"asciz"},
+    {"entry"},
+    {"extern"},
+};
+
 int isKeyword(char* str) {
-    return isCodeOperation(str);
-    /*add isDataOperation*/
+    return isCodeOperation(str) || isDataOperation(str);
 }
 
 int isCodeOperation(char* str) {
     int i;
-    for (i = 0; i < 27; i++) {
-        if (strcmp(str, table[i].name) == 0)
+    for (i = 0; i < CODES_NUM; i++) {
+        if (strcmp(str, codeTable[i].name) == 0)
+            return 1;
+    }
+
+    return 0;
+}
+
+int isDataOperation(char* str) {
+    int i;
+    for (i = 0; i < DATA_NUM; i++) {
+        if (strcmp(str, dataTable[i].name) == 0)
             return 1;
     }
 
