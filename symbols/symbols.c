@@ -29,7 +29,7 @@ Symbol* symbolFromCommand(Command* cmd) {
     strcpy(sym->name, cmd->label);
 
     sym->code = isCodeOperation(cmd->op);
-    /*data*/
+    sym->data = isDataOperation(cmd->op);
 
     return sym;
 }
