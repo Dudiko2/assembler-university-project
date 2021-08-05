@@ -7,7 +7,6 @@
 
 #include "../io/io.h"
 #include "../operations/operations.h"
-#include "../utils/utils.h"
 
 /*returns whether the characters in LABEL are allowed*/
 static int validLabelChars(char *label, int len);
@@ -17,6 +16,8 @@ Command *parseCommand(char *cmdStr) {
     char error = 0;
     char *trimmed;
     Command *cmd = newCommand();
+    /**/
+    Node *tokenListHead = NULL;
 
     trimmed = trim(cmdStr);
 
@@ -27,73 +28,91 @@ Command *parseCommand(char *cmdStr) {
         return NULL;
     }
 
-    cmd->label = parseLabel(trimmed);
-
-    if (cmd->label == NULL) {
-        printErrorMessage(INVALID_LABEL, trimmed);
-        error = 1;
-    }
-
-    free(trimmed);
-
-    if (error) {
-        freeCommand(cmd);
-        return NULL;
-    }
+    tokenListHead = strSplit(trimmed, " ");
+    error = mapListToCmd(cmd, &tokenListHead);
 
     return cmd;
 }
 
-char *parseLabel(char *cmdStr) {
-    /*for looping and storing the length of the label*/
-    int i;
-    /*length of cmdStr*/
-    int len;
-    int error = 0;
-    /*aux variable for chars*/
-    char c;
-    /*store label, if exists, here*/
-    char *label = calloc(LABEL_MAX_LEN, sizeof(char));
+int mapListToCmd(Command *cmd, Node **tokenList) {
+    Node *tokenNode;
+    char *token;
 
-    len = strlen(cmdStr);
+    /*handle leaks!*/
+    tokenNode = popFirst(tokenList);
+    token = tokenNode->data;
 
-    for (i = 0; (c = cmdStr[i]); i++) {
-        if (c == ':') {
-            if (i == 0) {
-                /*print invalid*/
-                free(label);
-                return NULL;
-            } else
-                break;
-        }
+    cmd->label = parseLabel(token);
+    if (cmd->label == NULL)
+        return -1;
+
+    if (!isEmptyStr(cmd->label)) {
+        tokenNode = popFirst(tokenList);
+        token = tokenNode->data;
+    }
+    cmd->op = parseOperation(token);
+    if (cmd->op == NULL) {
+        return -1;
     }
 
-    if (i < len) {
-        /*label too long*/
-        if (i > LABEL_MAX_LEN) {
-            /*print too long*/
-            free(label);
-            return NULL;
-        }
+    /*
+    token = pop
+    args = token[]
+    */
 
-        strncpy(label, cmdStr, i);
+    /* VERIFY LATER */
 
-        /*look for invalid chars*/
-        error = !validLabelChars(label, i) ? 1 : error;
+    return 0;
+}
 
-        /*make sure here the label is not a reserved keyword*/
-        error = isKeyword(label) ? 1 : error;
+char *parseLabel(char *str) {
+    int len = strlen(str);
+    char *label = calloc(len + 1, sizeof(char));
 
-        if (error) {
-            free(label);
-            return NULL;
-        }
-
+    /* no label, return empty */
+    if (str[len - 1] != ':') {
         return label;
     }
 
-    /*return empty*/
+    /*copy every char except ':'*/
+    strncpy(label, str, len - 1);
+
+    /*invalid label, return NULL*/
+    if (!validLabelChars(label, len - 1)) {
+        /*msg*/
+        free(label);
+        return NULL;
+    }
+
+    /*label too long, NULL*/
+    if (strlen(label) > LABEL_MAX_LEN) {
+        /*msg*/
+        free(label);
+        return NULL;
+    }
+
+    /*invalid token, NULL*/
+    if (isKeyword(label)) {
+        /*msg*/
+        free(label);
+        return NULL;
+    }
+
     return label;
+}
+
+char *parseOperation(char *str) {
+    char *op;
+
+    if (!isKeyword(str)) {
+        /*msg*/
+        return NULL;
+    }
+
+    op = calloc(strlen(str) + 1, sizeof(char));
+    strcpy(op, str);
+
+    return op;
 }
 
 static int validLabelChars(char *label, int len) {

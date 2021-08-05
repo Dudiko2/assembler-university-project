@@ -24,19 +24,53 @@ void insertInfront(Node **ptrHead, void *ptrData) {
     (*ptrHead) = node;
 }
 
-void insertLast(Node *head, void *ptrData) {
+void insertLast(Node **ptrHead, void *ptrData) {
     Node *node;
-
-    if (head == NULL)
-        return;
-
+    Node *head = *ptrHead;
     node = nodify(ptrData);
+
+    if (head == NULL) {
+        *ptrHead = node;
+        return;
+    }
 
     while (head->next != NULL) {
         head = head->next;
     }
 
     head->next = node;
+}
+
+Node *popFirst(Node **ptrHead) {
+    Node *node;
+
+    if (*ptrHead == NULL)
+        return NULL;
+
+    node = *ptrHead;
+    *ptrHead = node->next;
+    node->next = NULL;
+
+    return node;
+}
+
+Node *strSplit(char *str, char *delim) {
+    char *token;
+    char *p;
+    Node *head = NULL;
+
+    p = strtok(str, delim);
+    while (p != NULL) {
+        token = calloc(strlen(p) + 1, sizeof(char));
+        strcpy(token, p);
+        insertLast(&head, token);
+
+        p = strtok(NULL, delim);
+    }
+
+    /*handle leaks*/
+
+    return head;
 }
 
 char *trim(char *str) {
@@ -53,11 +87,11 @@ char *trim(char *str) {
         ;
 
     /*empty*/
-    if (left > right) {
+    if (left >= right) {
         return newStr;
     }
 
-    strncpy(newStr, str + left, right - left + 1);
+    strncpy(newStr, str + left, right - left - 1);
 
     return newStr;
 }
