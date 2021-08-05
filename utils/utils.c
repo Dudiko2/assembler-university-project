@@ -15,6 +15,27 @@ Node *nodify(void *ptrData) {
     return newNode;
 }
 
+void freeNodeShallowData(Node *node) {
+    if (node == NULL)
+        return;
+
+    free(node->data);
+    free(node);
+}
+
+void freeListShallow(Node *head) {
+    Node *temp;
+
+    if (head == NULL)
+        return;
+
+    while (head != NULL) {
+        temp = head->next;
+        freeNodeShallowData(head);
+        head = temp;
+    }
+}
+
 void insertInfront(Node **ptrHead, void *ptrData) {
     Node *node;
 
@@ -39,19 +60,6 @@ void insertLast(Node **ptrHead, void *ptrData) {
     }
 
     head->next = node;
-}
-
-Node *popFirst(Node **ptrHead) {
-    Node *node;
-
-    if (*ptrHead == NULL)
-        return NULL;
-
-    node = *ptrHead;
-    *ptrHead = node->next;
-    node->next = NULL;
-
-    return node;
 }
 
 Node *strSplit(char *str, char *delim) {

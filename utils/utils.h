@@ -12,14 +12,22 @@ struct Node {
 /*takes a pointer to some data and wraps it inside a node. NOTE: this function does not make a copy of the data, but uses the existing data instead.*/
 Node *nodify(void *ptrData);
 
+/*
+frees the memory allocated to the node and it's data.
+should only be used when the data is shallow (i.e. no pointers nested in data)
+*/
+void freeNodeShallowData(Node *node);
+
+/*
+frees an entire list using freeNodeShallowData
+*/
+void freeListShallow(Node *head);
+
 /*takes a ref to the head of a list (ptrHead) and a pointer to some data, then puts a new node containing ptrData as the head*/
 void insertInfront(Node **ptrHead, void *ptrData);
 
 /*takes a ref to the head of a list (ptrHead) and a pointer to some data, then puts a new node containing ptrData as the tail*/
 void insertLast(Node **ptrHead, void *ptrData);
-
-/*Removes the first node of a list and returns it*/
-Node *popFirst(Node **ptrHead);
 
 /*
 Splits a string into a linked list of words. uses strtok.

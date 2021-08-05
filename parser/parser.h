@@ -8,7 +8,7 @@
 
 /*undone*/
 Command *parseCommand(char *cmdStr);
-int mapListToCmd(Command *cmd, Node **tokenList);
+int mapTokenListToCmd(Command *cmd, Node *tokenNode);
 /*undone*/
 char *parseLabel(char *str);
 char *parseOperation(char *str);

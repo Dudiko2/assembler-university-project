@@ -29,28 +29,24 @@ Command *parseCommand(char *cmdStr) {
     }
 
     tokenListHead = strSplit(trimmed, " ");
-    error = mapListToCmd(cmd, &tokenListHead);
+    error = mapTokenListToCmd(cmd, tokenListHead);
+
+    free(trimmed);
+    freeListShallow(tokenListHead);
 
     return cmd;
 }
 
-int mapListToCmd(Command *cmd, Node **tokenList) {
-    Node *tokenNode;
-    char *token;
-
-    /*handle leaks!*/
-    tokenNode = popFirst(tokenList);
-    token = tokenNode->data;
-
-    cmd->label = parseLabel(token);
-    if (cmd->label == NULL)
+int mapTokenListToCmd(Command *cmd, Node *tokenNode) {
+    cmd->label = parseLabel(tokenNode->data);
+    if (cmd->label == NULL) {
         return -1;
+    }
 
     if (!isEmptyStr(cmd->label)) {
-        tokenNode = popFirst(tokenList);
-        token = tokenNode->data;
+        tokenNode = tokenNode->next;
     }
-    cmd->op = parseOperation(token);
+    cmd->op = parseOperation(tokenNode->data);
     if (cmd->op == NULL) {
         return -1;
     }
