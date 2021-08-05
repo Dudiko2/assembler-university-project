@@ -11,20 +11,17 @@
 
 /*returns whether the characters in LABEL are allowed*/
 static int validLabelChars(char *label, int len);
+static int isComment(char *str);
 
 Command *parseCommand(char *cmdStr) {
     char error = 0;
     char *trimmed;
     Command *cmd = newCommand();
 
-    /*
-    should move to a (yet to be written) parseLine
-    that parses every line of the source code, not just cmd's
-    */
     trimmed = trim(cmdStr);
 
     /*nothing to parse */
-    if (isEmptyStr(trimmed)) {
+    if (isComment(trimmed) || isEmptyStr(trimmed)) {
         free(trimmed);
         freeCommand(cmd);
         return NULL;
@@ -113,4 +110,8 @@ static int validLabelChars(char *label, int len) {
     }
 
     return 1;
+}
+
+static int isComment(char *str) {
+    return str[0] == ';';
 }

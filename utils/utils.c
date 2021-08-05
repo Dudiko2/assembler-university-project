@@ -24,6 +24,21 @@ void insertInfront(Node **ptrHead, void *ptrData) {
     (*ptrHead) = node;
 }
 
+void insertLast(Node *head, void *ptrData) {
+    Node *node;
+
+    if (head == NULL)
+        return;
+
+    node = nodify(ptrData);
+
+    while (head->next != NULL) {
+        head = head->next;
+    }
+
+    head->next = node;
+}
+
 char *trim(char *str) {
     int len = strlen(str);
     int left;
