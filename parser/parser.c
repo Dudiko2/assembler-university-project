@@ -16,7 +16,6 @@ Command *parseCommand(char *cmdStr) {
     char error = 0;
     char *trimmed;
     Command *cmd = newCommand();
-    /**/
     Node *tokenListHead = NULL;
 
     trimmed = trim(cmdStr);
@@ -33,6 +32,11 @@ Command *parseCommand(char *cmdStr) {
 
     free(trimmed);
     freeListShallow(tokenListHead);
+
+    if (error) {
+        freeCommand(cmd);
+        return NULL;
+    }
 
     return cmd;
 }
