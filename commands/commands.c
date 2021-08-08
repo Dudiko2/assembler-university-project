@@ -2,6 +2,8 @@
 
 #include <stdlib.h>
 
+#include "../utils/utils.h"
+
 Command *newCommand() {
     Command *cmd = malloc(sizeof(Command));
     if (cmd == NULL) return NULL;
@@ -19,6 +21,6 @@ void freeCommand(Command *cmd) {
 
     free(cmd->label);
     free(cmd->op);
-    free(cmd->arguments);
+    freeStringArray(cmd->arguments);
     free(cmd);
 }

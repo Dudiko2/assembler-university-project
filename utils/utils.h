@@ -29,11 +29,19 @@ void insertInfront(Node **ptrHead, void *ptrData);
 /*takes a ref to the head of a list (ptrHead) and a pointer to some data, then puts a new node containing ptrData as the tail*/
 void insertLast(Node **ptrHead, void *ptrData);
 
+void insertNodeLast(Node **list, Node *node);
+
 /*
 Splits a string into a linked list of words. uses strtok.
-Each word has to be free()'d to prevent memory leaks
+The list has to be free()'d to prevent memory leaks
 */
-Node *strSplit(char *str, char *delim);
+Node *strtokSplit(char *str, char *delim);
+
+/*
+Splits a string into a linked list of words at points that match PHRASE exactly.
+The list has to be free()'d to prevent memory leaks
+*/
+Node *split(char *str, char *phrase);
 
 /*
 returns a new copy of str minus the spaces surronding it.
@@ -43,5 +51,7 @@ char *trim(char *str);
 
 /*returns whether STR is an empty string*/
 int isEmptyStr(char *str);
+
+void freeStringArray(char **arr);
 
 #endif

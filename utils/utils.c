@@ -62,7 +62,22 @@ void insertLast(Node **ptrHead, void *ptrData) {
     head->next = node;
 }
 
-Node *strSplit(char *str, char *delim) {
+void insertNodeLast(Node **list, Node *node) {
+    Node *head = *list;
+
+    if (head == NULL) {
+        *list = node;
+        return;
+    }
+
+    while (head->next != NULL) {
+        head = head->next;
+    }
+
+    head->next = node;
+}
+
+Node *strtokSplit(char *str, char *delim) {
     char *token;
     char *p;
     Node *head = NULL;
@@ -76,7 +91,52 @@ Node *strSplit(char *str, char *delim) {
         p = strtok(NULL, delim);
     }
 
-    /*handle leaks*/
+    return head;
+}
+
+Node *split(char *str, char *phrase) {
+    int left;
+    int right;
+    int len;
+    int phraseLen;
+    char *temp;
+    Node *head = NULL;
+
+    len = strlen(str);
+    phraseLen = strlen(phrase);
+    if (len == 0 || phraseLen == 0) {
+        return NULL;
+    }
+
+    /*match at the begining*/
+    if (strncmp(str, phrase, phraseLen) == 0) {
+        left = phraseLen;
+    } else {
+        left = 0;
+    }
+
+    for (right = left + 1; right < len; right++) {
+        if (strncmp(str + right, phrase, phraseLen) == 0) {
+            temp = calloc(right - left + 1, sizeof(char));
+            strncpy(temp, str + left, right - left);
+
+            insertLast(&head, temp);
+
+            left = right + phraseLen;
+            right = left;
+        }
+    }
+
+    /*add rest if there is any*/
+    temp = calloc(right - left + 1, sizeof(char));
+    strcpy(temp, str + left);
+
+    if (isEmptyStr(temp)) {
+        free(temp);
+        return head;
+    }
+
+    insertLast(&head, temp);
 
     return head;
 }
@@ -106,4 +166,18 @@ char *trim(char *str) {
 
 int isEmptyStr(char *str) {
     return (*str) == '\0';
+}
+
+void freeStringArray(char **arr) {
+    int i;
+
+    if (arr == NULL) {
+        return;
+    }
+
+    for (i = 0; *(arr + i); i++) {
+        free(arr + i);
+    }
+
+    free(arr);
 }

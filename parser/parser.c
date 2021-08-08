@@ -27,7 +27,7 @@ Command *parseCommand(char *cmdStr) {
         return NULL;
     }
 
-    tokenListHead = strSplit(trimmed, " ");
+    tokenListHead = strtokSplit(trimmed, " \t");
     error = mapTokenListToCmd(cmd, tokenListHead);
 
     free(trimmed);
@@ -41,26 +41,30 @@ Command *parseCommand(char *cmdStr) {
     return cmd;
 }
 
-int mapTokenListToCmd(Command *cmd, Node *tokenNode) {
-    cmd->label = parseLabel(tokenNode->data);
+int mapTokenListToCmd(Command *cmd, Node *headToken) {
+    cmd->label = parseLabel(headToken->data);
+
+    /*invalid label*/
     if (cmd->label == NULL) {
         return -1;
     }
 
+    /*label found, next token*/
     if (!isEmptyStr(cmd->label)) {
-        tokenNode = tokenNode->next;
+        headToken = headToken->next;
     }
-    cmd->op = parseOperation(tokenNode->data);
+
+    cmd->op = parseOperation(headToken->data);
     if (cmd->op == NULL) {
         return -1;
     }
 
-    /*
-    token = pop
-    args = token[]
-    */
+    headToken = headToken->next;
 
-    /* VERIFY LATER */
+    cmd->arguments = parseArgumentList(headToken);
+    if (cmd->arguments == NULL) {
+        return -1;
+    }
 
     return 0;
 }
@@ -113,6 +117,27 @@ char *parseOperation(char *str) {
     strcpy(op, str);
 
     return op;
+}
+
+char **parseArgumentList(Node *token) {
+    int argsLen = ARGS_LEN + 1;
+    char **arguments = calloc(argsLen, sizeof(char *));
+    Node *head = NULL;
+
+    /*no args, return empty*/
+    if (token == NULL) {
+        return arguments;
+    }
+
+    while (token != NULL) {
+        insertNodeLast(&head, split(token->data, ","));
+
+        token = token->next;
+    }
+
+    /*convert list to string array here*/
+
+    return arguments;
 }
 
 static int validLabelChars(char *label, int len) {
