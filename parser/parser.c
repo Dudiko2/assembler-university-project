@@ -121,13 +121,19 @@ char *parseOperation(char *str) {
 
 char **parseArgumentList(Node *token) {
     int argsLen = ARGS_LEN + 1;
+    int i;
     char **arguments = calloc(argsLen, sizeof(char *));
+    char *temp;
     Node *head = NULL;
+    Node *curr;
 
     /*no args, return empty*/
     if (token == NULL) {
         return arguments;
     }
+
+    /*handle string args HERE*/
+    /*handle comma at beginning and end of args*/
 
     while (token != NULL) {
         insertNodeLast(&head, split(token->data, ","));
@@ -136,6 +142,29 @@ char **parseArgumentList(Node *token) {
     }
 
     /*convert list to string array here*/
+    i = 0;
+    curr = head;
+    while (curr != NULL) {
+        temp = calloc(strlen(curr->data) + 1, sizeof(char));
+        strcpy(temp, curr->data);
+
+        if (i == argsLen) {
+            int j;
+
+            argsLen += ARGS_LEN;
+            arguments = realloc(arguments, argsLen * sizeof(char *));
+            for (j = i; j < argsLen; j++) {
+                arguments[j] = '\0';
+            }
+        }
+
+        arguments[i] = temp;
+
+        curr = curr->next;
+        i++;
+    }
+
+    freeListShallow(head);
 
     return arguments;
 }

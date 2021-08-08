@@ -78,11 +78,15 @@ void insertNodeLast(Node **list, Node *node) {
 }
 
 Node *strtokSplit(char *str, char *delim) {
+    char *temp;
     char *token;
     char *p;
     Node *head = NULL;
 
-    p = strtok(str, delim);
+    temp = calloc(strlen(str) + 1, sizeof(char));
+    strcpy(temp, str);
+
+    p = strtok(temp, delim);
     while (p != NULL) {
         token = calloc(strlen(p) + 1, sizeof(char));
         strcpy(token, p);
@@ -90,6 +94,8 @@ Node *strtokSplit(char *str, char *delim) {
 
         p = strtok(NULL, delim);
     }
+
+    free(temp);
 
     return head;
 }
@@ -176,7 +182,7 @@ void freeStringArray(char **arr) {
     }
 
     for (i = 0; *(arr + i); i++) {
-        free(arr + i);
+        free(*(arr + i));
     }
 
     free(arr);

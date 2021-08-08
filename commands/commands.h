@@ -13,4 +13,6 @@ Command *newCommand();
 /*frees the memory that was allocated for CMD by newCommand*/
 void freeCommand(Command *cmd);
 
+void printCommand(Command *cmd);
+
 #endif

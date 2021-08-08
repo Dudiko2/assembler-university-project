@@ -31,9 +31,7 @@ int main(int argc, char *argv[]) {
         while (fgets(temp, MAX_COMMAND_LEN, srcFile) != NULL) {
             Command *cmd = parseCommand(temp);
 
-            printf("%d", j++);
-            if (cmd != NULL)
-                printf("\t%s", cmd->label);
+            printCommand(cmd);
             printf("\n");
             freeCommand(cmd);
         }
