@@ -4,6 +4,8 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include "../globals.h"
+
 Node *nodify(void *ptrData) {
     Node *newNode = malloc(sizeof(Node));
     if (newNode == NULL)
@@ -77,14 +79,21 @@ void insertNodeLast(Node **list, Node *node) {
     head->next = node;
 }
 
-Node *strtokSplit(char *str, char *delim) {
-    char *temp;
+Node *strtokSplit(char *str, char *delim, int stopSplitAt) {
+    char temp[MAX_COMMAND_LEN];
     char *token;
     char *p;
+    char *stop;
+    char remainder[MAX_COMMAND_LEN];
     Node *head = NULL;
 
-    temp = calloc(strlen(str) + 1, sizeof(char));
     strcpy(temp, str);
+
+    stop = strchr(temp, stopSplitAt);
+    if (stop != NULL) {
+        strcpy(remainder, stop);
+        stop[0] = '\0';
+    }
 
     p = strtok(temp, delim);
     while (p != NULL) {
@@ -95,7 +104,11 @@ Node *strtokSplit(char *str, char *delim) {
         p = strtok(NULL, delim);
     }
 
-    free(temp);
+    if (stop != NULL) {
+        token = calloc(strlen(remainder) + 1, sizeof(char));
+        strcpy(token, remainder);
+        insertLast(&head, token);
+    }
 
     return head;
 }

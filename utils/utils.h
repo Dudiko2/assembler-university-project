@@ -35,7 +35,7 @@ void insertNodeLast(Node **list, Node *node);
 Splits a string into a linked list of words. uses strtok.
 The list has to be free()'d to prevent memory leaks
 */
-Node *strtokSplit(char *str, char *delim);
+Node *strtokSplit(char *str, char *delim, int stopSplitAt);
 
 /*
 Splits a string into a linked list of words at points that match PHRASE exactly.

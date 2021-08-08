@@ -1,16 +1,14 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+#include "./globals.h"
 #include "./io/io.h"
 #include "./operations/operations.h"
 #include "./parser/parser.h"
 #include "./symbols/symbols.h"
 
-#define MAX_COMMAND_LEN 82
-
 int main(int argc, char *argv[]) {
     int i;
-    int j;
     /* For temporary temp storage */
     char temp[MAX_COMMAND_LEN];
     /* Get an array of valid file name strings */
@@ -27,7 +25,6 @@ int main(int argc, char *argv[]) {
         }
 
         /* PHASE 1 */
-        j = 1;
         while (fgets(temp, MAX_COMMAND_LEN, srcFile) != NULL) {
             Command *cmd = parseCommand(temp);
 

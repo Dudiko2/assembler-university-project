@@ -19,6 +19,7 @@ Command *parseCommand(char *cmdStr) {
     Node *tokenListHead = NULL;
 
     trimmed = trim(cmdStr);
+    /*handle cmd max length*/
 
     /*nothing to parse */
     if (isComment(trimmed) || isEmptyStr(trimmed)) {
@@ -27,7 +28,7 @@ Command *parseCommand(char *cmdStr) {
         return NULL;
     }
 
-    tokenListHead = strtokSplit(trimmed, " \t");
+    tokenListHead = strtokSplit(trimmed, " \t", '\"');
     error = mapTokenListToCmd(cmd, tokenListHead);
 
     free(trimmed);
@@ -132,10 +133,21 @@ char **parseArgumentList(Node *token) {
         return arguments;
     }
 
-    /*handle string args HERE*/
     /*handle comma at beginning and end of args*/
+    if (((char *)(token->data))[0] == ',') {
+        freeStringArray(arguments);
+        return NULL;
+    }
 
     while (token != NULL) {
+        char *data = token->data;
+        if (token->next == NULL && data[strlen(data) - 1] == ',') {
+            freeStringArray(arguments);
+            freeListShallow(head);
+
+            return NULL;
+        }
+
         insertNodeLast(&head, split(token->data, ","));
 
         token = token->next;
