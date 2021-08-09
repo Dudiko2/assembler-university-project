@@ -9,7 +9,10 @@ struct Node {
     Node *next;
 };
 
-/*takes a pointer to some data and wraps it inside a node. NOTE: this function does not make a copy of the data, but uses the existing data instead.*/
+/*
+takes a pointer to some data and wraps it inside a node.
+NOTE: this function does not make a copy of the data, but uses the existing data instead.
+*/
 Node *nodify(void *ptrData);
 
 /*
@@ -23,10 +26,16 @@ frees an entire list using freeNodeShallowData
 */
 void freeListShallow(Node *head);
 
-/*takes a ref to the head of a list (ptrHead) and a pointer to some data, then puts a new node containing ptrData as the head*/
+/*
+takes a ref to the head of a list (ptrHead) and a pointer to some data, then puts a new node containing ptrData as the head.
+NOTE: this function does not make a copy of the data, but uses the existing data instead.
+*/
 void insertInfront(Node **ptrHead, void *ptrData);
 
-/*takes a ref to the head of a list (ptrHead) and a pointer to some data, then puts a new node containing ptrData as the tail*/
+/*
+takes a ref to the head of a list (ptrHead) and a pointer to some data, then puts a new node containing ptrData as the tail.
+NOTE: this function does not make a copy of the data, but uses the existing data instead.
+*/
 void insertLast(Node **ptrHead, void *ptrData);
 
 void insertNodeLast(Node **list, Node *node);
@@ -53,5 +62,11 @@ char *trim(char *str);
 int isEmptyStr(char *str);
 
 void freeStringArray(char **arr);
+
+/*
+creates a new copy of STR.
+needs to be free()'d after use
+*/
+char *newStringCopy(char *str);
 
 #endif

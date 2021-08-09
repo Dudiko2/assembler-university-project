@@ -97,16 +97,14 @@ Node *strtokSplit(char *str, char *delim, int stopSplitAt) {
 
     p = strtok(temp, delim);
     while (p != NULL) {
-        token = calloc(strlen(p) + 1, sizeof(char));
-        strcpy(token, p);
+        token = newStringCopy(p);
         insertLast(&head, token);
 
         p = strtok(NULL, delim);
     }
 
     if (stop != NULL) {
-        token = calloc(strlen(remainder) + 1, sizeof(char));
-        strcpy(token, remainder);
+        token = newStringCopy(remainder);
         insertLast(&head, token);
     }
 
@@ -127,6 +125,7 @@ Node *split(char *str, char *phrase) {
         return NULL;
     }
 
+    /*NOTE: consider dropping the tests at the edges in order to clean the code at parseArgumentList*/
     /*match at the begining*/
     if (strncmp(str, phrase, phraseLen) == 0) {
         left = phraseLen;
@@ -199,4 +198,11 @@ void freeStringArray(char **arr) {
     }
 
     free(arr);
+}
+
+char *newStringCopy(char *str) {
+    char *copy = calloc(strlen(str) + 1, sizeof(char));
+    strcpy(copy, str);
+
+    return copy;
 }

@@ -25,9 +25,7 @@ Symbol* newSymbol() {
 Symbol* symbolFromCommand(Command* cmd) {
     Symbol* sym = newSymbol();
 
-    sym->name = calloc(strlen(cmd->label) + 1, sizeof(char));
-    strcpy(sym->name, cmd->label);
-
+    sym->name = newStringCopy(cmd->label);
     sym->code = isCodeOperation(cmd->op);
     sym->data = isDataOperation(cmd->op);
 

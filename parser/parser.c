@@ -10,7 +10,11 @@
 
 /*returns whether the characters in LABEL are allowed*/
 static int validLabelChars(char *label, int len);
+static int startsWith(char *str, int c);
+static int endsWith(char *str, int c);
 static int isComment(char *str);
+/*returns whether STR is a properly declared string (according to the spec)*/
+static int isString(char *str);
 
 Command *parseCommand(char *cmdStr) {
     char error = 0;
@@ -114,8 +118,7 @@ char *parseOperation(char *str) {
         return NULL;
     }
 
-    op = calloc(strlen(str) + 1, sizeof(char));
-    strcpy(op, str);
+    op = newStringCopy(str);
 
     return op;
 }
@@ -134,21 +137,29 @@ char **parseArgumentList(Node *token) {
     }
 
     /*handle comma at beginning and end of args*/
-    if (((char *)(token->data))[0] == ',') {
+    if (startsWith(token->data, ',')) {
         freeStringArray(arguments);
         return NULL;
     }
 
     while (token != NULL) {
         char *data = token->data;
-        if (token->next == NULL && data[strlen(data) - 1] == ',') {
+
+        if (token->next == NULL && endsWith(data, ',')) {
             freeStringArray(arguments);
             freeListShallow(head);
 
             return NULL;
         }
 
-        insertNodeLast(&head, split(token->data, ","));
+        /*check if token holds an asciz string before splitting*/
+        if (isString(data)) {
+            char *copy = newStringCopy(data);
+
+            insertLast(&head, copy);
+        } else {
+            insertNodeLast(&head, split(data, ","));
+        }
 
         token = token->next;
     }
@@ -157,8 +168,7 @@ char **parseArgumentList(Node *token) {
     i = 0;
     curr = head;
     while (curr != NULL) {
-        temp = calloc(strlen(curr->data) + 1, sizeof(char));
-        strcpy(temp, curr->data);
+        temp = newStringCopy(curr->data);
 
         if (i == argsLen) {
             int j;
@@ -197,6 +207,18 @@ static int validLabelChars(char *label, int len) {
     return 1;
 }
 
+static int startsWith(char *str, int c) {
+    return str[0] == c;
+}
+
+static int endsWith(char *str, int c) {
+    return str[strlen(str) - 1] == c;
+}
+
 static int isComment(char *str) {
-    return str[0] == ';';
+    return startsWith(str, ';');
+}
+
+static int isString(char *str) {
+    return startsWith(str, '\"') && endsWith(str, '\"');
 }
