@@ -169,15 +169,16 @@ char *trim(char *str) {
 
     for (left = 0; isspace(str[left]); left++)
         ;
-    for (right = len; isspace(str[right]); right--)
-        ;
 
     /*empty*/
-    if (left >= right) {
+    if (left == len) {
         return newStr;
     }
 
-    strncpy(newStr, str + left, right - left - 1);
+    for (right = len - 1; isspace(str[right]); right--)
+        ;
+
+    strncpy(newStr, str + left, right - left + 1);
 
     return newStr;
 }

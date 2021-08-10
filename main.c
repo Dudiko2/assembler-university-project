@@ -27,6 +27,7 @@ int main(int argc, char *argv[]) {
         /* PHASE 1 */
         while (fgets(temp, MAX_COMMAND_LEN, srcFile) != NULL) {
             Command *cmd = parseCommand(temp);
+            /*puts(temp);*/
 
             printCommand(cmd);
             printf("\n");
