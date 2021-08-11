@@ -7,14 +7,15 @@
 
 #include "../io/io.h"
 #include "../operations/operations.h"
+#include "../utils/utils.h"
 
 /*returns whether the characters in LABEL are allowed*/
 static int validLabelChars(char *label, int len);
-static int startsWith(char *str, int c);
-static int endsWith(char *str, int c);
 static int isComment(char *str);
 /*returns whether STR is a properly declared string (according to the spec)*/
 static int isString(char *str);
+static int isNumber(char *str, int mayHaveSign);
+static int isRegister(char *str);
 
 Command *parseCommand(char *cmdStr) {
     char error = 0;
@@ -207,18 +208,48 @@ static int validLabelChars(char *label, int len) {
     return 1;
 }
 
-static int startsWith(char *str, int c) {
-    return str[0] == c;
-}
-
-static int endsWith(char *str, int c) {
-    return str[strlen(str) - 1] == c;
-}
-
 static int isComment(char *str) {
     return startsWith(str, ';');
 }
 
 static int isString(char *str) {
     return startsWith(str, '\"') && endsWith(str, '\"');
+}
+
+static int isNumber(char *str, int mayHaveSign) {
+    int i = 0;
+    int len = strlen(str);
+    char c = str[i];
+
+    if (mayHaveSign) {
+        if (len <= 1)
+            return 0;
+
+        if (c == '+' || c == '-' || isdigit(c)) {
+            i++;
+        } else {
+            return 0;
+        }
+    }
+
+    while ((c = str[i])) {
+        if (!isdigit(c))
+            return 0;
+
+        i++;
+    }
+
+    return 1;
+}
+
+static int isRegister(char *str) {
+    int len = strlen(str);
+
+    if (len <= 1)
+        return 0;
+
+    if (str[0] != '$')
+        return 0;
+
+    return isNumber(str + 1, 0);
 }

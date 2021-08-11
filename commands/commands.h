@@ -1,6 +1,8 @@
 #ifndef COMMANDS_H
 #define COMMANDS_H
 
+#include "../utils/utils.h"
+
 /*a structure that represents a parsed command string*/
 typedef struct command {
     char *label;
@@ -14,5 +16,7 @@ Command *newCommand();
 void freeCommand(Command *cmd);
 
 void printCommand(Command *cmd);
+
+void freeCommandList(Node *head);
 
 #endif

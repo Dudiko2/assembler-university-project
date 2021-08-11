@@ -64,3 +64,13 @@ int isDataOperation(char* str) {
 
     return 0;
 }
+
+CodeOperation* getCodeOperation(const char* name) {
+    int i;
+    for (i = 0; i < CODES_NUM; i++) {
+        if (strcmp(name, codeTable[i].name) == 0)
+            return &(codeTable[i]);
+    }
+
+    return NULL;
+}

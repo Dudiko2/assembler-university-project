@@ -3,8 +3,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#include "../utils/utils.h"
-
 Command *newCommand() {
     Command *cmd = malloc(sizeof(Command));
     if (cmd == NULL) return NULL;
@@ -46,4 +44,19 @@ void printCommand(Command *cmd) {
         }
         printf("\n");
     }
+}
+
+void freeCommandList(Node *head) {
+    Node *curr;
+    if (!head)
+        return;
+
+    curr = head;
+    while (curr) {
+        Command *cmd = curr->data;
+        freeCommand(cmd);
+        curr = curr->next;
+    }
+
+    free(head);
 }

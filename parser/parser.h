@@ -9,10 +9,14 @@
 
 /*undone*/
 Command *parseCommand(char *cmdStr);
+
 int mapTokenListToCmd(Command *cmd, Node *headToken);
+
 /*undone*/
 char *parseLabel(char *str);
+
 char *parseOperation(char *str);
+
 char **parseArgumentList(Node *token);
 
 #endif

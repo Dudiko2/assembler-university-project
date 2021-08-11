@@ -207,3 +207,11 @@ char *newStringCopy(char *str) {
 
     return copy;
 }
+
+int startsWith(char *str, int c) {
+    return str[0] == c;
+}
+
+int endsWith(char *str, int c) {
+    return str[strlen(str) - 1] == c;
+}

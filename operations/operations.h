@@ -8,12 +8,10 @@ typedef struct codeOperation {
     char *name;
     int opcode;
     int funct;
-    char **argFormats;
 } CodeOperation;
 
 typedef struct dataOperation {
     char *name;
-    char **argFormats;
 } DataOperation;
 
 /*
@@ -23,5 +21,6 @@ TODO: add guidance commands
 int isKeyword(char *str);
 int isCodeOperation(char *str);
 int isDataOperation(char *str);
+CodeOperation *getCodeOperation(const char *name);
 
 #endif

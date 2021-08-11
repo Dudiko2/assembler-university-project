@@ -69,4 +69,8 @@ needs to be free()'d after use
 */
 char *newStringCopy(char *str);
 
+int startsWith(char *str, int c);
+
+int endsWith(char *str, int c);
+
 #endif
