@@ -1,6 +1,7 @@
 #ifndef SYMBOLS_H
 #define SYMBOLS_H
 
+#include "../commands/commands.h"
 #include "../utils/utils.h"
 
 typedef struct symbol {
@@ -13,5 +14,10 @@ typedef struct symbol {
 } Symbol;
 
 Symbol* newSymbol();
+Symbol* symbolFromCommand(Command* cmd);
+void freeSymbol(Symbol* sym);
+void freeSymbolList(Node* head);
+void storeSymbol(Node** headSymbolRef, Symbol* sym);
+int symbolExists(Node** headSymbolRef, Symbol* sym);
 
 #endif

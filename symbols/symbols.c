@@ -4,8 +4,8 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "../commands/commands.h"
 #include "../operations/operations.h"
+#include "../utils/utils.h"
 
 Symbol* newSymbol() {
     Symbol* sym = malloc(sizeof(Symbol));
@@ -23,7 +23,13 @@ Symbol* newSymbol() {
 }
 
 Symbol* symbolFromCommand(Command* cmd) {
-    Symbol* sym = newSymbol();
+    Symbol* sym;
+
+    if (cmd == NULL || isEmptyStr(cmd->label)) {
+        return NULL;
+    }
+
+    sym = newSymbol();
 
     sym->name = newStringCopy(cmd->label);
     sym->code = isCodeOperation(cmd->op);
@@ -38,4 +44,52 @@ void freeSymbol(Symbol* sym) {
 
     free(sym->name);
     free(sym);
+}
+
+void freeSymbolList(Node* head) {
+    Node* temp;
+
+    if (head == NULL)
+        return;
+
+    while (head != NULL) {
+        temp = head->next;
+
+        freeSymbol(head->data);
+        free(head);
+
+        head = temp;
+    }
+}
+
+void storeSymbol(Node** headSymbolRef, Symbol* sym) {
+    if (headSymbolRef == NULL) {
+        insertLast(headSymbolRef, sym);
+        return;
+    }
+
+    if (symbolExists(headSymbolRef, sym)) {
+        /*msg*/
+        return;
+    }
+
+    insertInfront(headSymbolRef, sym);
+}
+
+int symbolExists(Node** headSymbolRef, Symbol* sym) {
+    Node* symNode;
+    Symbol* temp;
+
+    symNode = *headSymbolRef;
+
+    while (symNode != NULL) {
+        temp = symNode->data;
+        if (strcmp(temp->name, sym->name) == 0) {
+            return 1;
+        }
+
+        symNode = symNode->next;
+    }
+
+    return 0;
 }
