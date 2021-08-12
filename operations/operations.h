@@ -21,6 +21,6 @@ TODO: add guidance commands
 int isKeyword(char *str);
 int isCodeOperation(char *str);
 int isDataOperation(char *str);
-CodeOperation *getCodeOperation(const char *name);
+CodeOperation *getCodeOperation(char *name);
 
 #endif

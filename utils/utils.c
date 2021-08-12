@@ -231,3 +231,7 @@ int startsWith(char *str, int c) {
 int endsWith(char *str, int c) {
     return str[strlen(str) - 1] == c;
 }
+
+int strMatch(char *str1, char *str2) {
+    return strcmp(str1, str2) == 0;
+}

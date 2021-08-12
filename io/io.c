@@ -4,6 +4,8 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include "../utils/utils.h"
+
 /* Checks if an argument string has a valid extension and returns 1 (true) or 0 (false) accordingly */
 static unsigned int hasValidExtension(char *str);
 
@@ -61,5 +63,5 @@ static unsigned int hasValidExtension(char *str) {
         if (str[i] == '.') pos = i;
     }
 
-    return (pos > -1 && strcmp(str + pos, AS_EXT_STR) == 0);
+    return (pos > -1 && strMatch(str + pos, AS_EXT_STR));
 }

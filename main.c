@@ -54,15 +54,13 @@ int main(int argc, char *argv[]) {
 
             /*attempt to store*/
             /*should check .entry or external before*/
-            if (strcmp(cmd->op, ".entry") == 0 || strcmp(cmd->op, ".external") == 0) {
+            if (strMatch(cmd->op, ".entry") || strMatch(cmd->op, ".external")) {
                 /*msg*/
                 freeSymbol(sym);
             } else {
                 int stored = storeSymbol(&symbolsHead, sym, address);
 
-                if (stored)
-                    printf("%d %s\n", sym->address, sym->name);
-                else
+                if (!stored)
                     freeSymbol(sym);
             }
             /*

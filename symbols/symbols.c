@@ -82,7 +82,7 @@ int symbolExists(Node** headSymbolRef, Symbol* sym) {
 
     while (symNode != NULL) {
         temp = symNode->data;
-        if (strcmp(temp->name, sym->name) == 0) {
+        if (strMatch(temp->name, sym->name)) {
             return 1;
         }
 

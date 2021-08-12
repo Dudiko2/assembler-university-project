@@ -1,6 +1,9 @@
 #include "operations.h"
 
 #include <string.h>
+
+#include "../utils/utils.h"
+
 /*table of operations used for validation purposes*/
 static CodeOperation codeTable[] = {
     {"add", 0, 1},
@@ -48,7 +51,7 @@ int isKeyword(char* str) {
 int isCodeOperation(char* str) {
     int i;
     for (i = 0; i < CODES_NUM; i++) {
-        if (strcmp(str, codeTable[i].name) == 0)
+        if (strMatch(str, codeTable[i].name))
             return 1;
     }
 
@@ -58,17 +61,17 @@ int isCodeOperation(char* str) {
 int isDataOperation(char* str) {
     int i;
     for (i = 0; i < DATA_NUM; i++) {
-        if (strcmp(str, dataTable[i].name) == 0)
+        if (strMatch(str, dataTable[i].name))
             return 1;
     }
 
     return 0;
 }
 
-CodeOperation* getCodeOperation(const char* name) {
+CodeOperation* getCodeOperation(char* name) {
     int i;
     for (i = 0; i < CODES_NUM; i++) {
-        if (strcmp(name, codeTable[i].name) == 0)
+        if (strMatch(name, codeTable[i].name))
             return &(codeTable[i]);
     }
 

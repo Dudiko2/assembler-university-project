@@ -79,4 +79,6 @@ int startsWith(char *str, int c);
 
 int endsWith(char *str, int c);
 
+int strMatch(char *str1, char *str2);
+
 #endif
