@@ -17,7 +17,7 @@ Symbol* newSymbol();
 Symbol* symbolFromCommand(Command* cmd);
 void freeSymbol(void* ptr);
 void freeSymbolList(Node* head);
-void storeSymbol(Node** headSymbolRef, Symbol* sym);
+int storeSymbol(Node** headSymbolRef, Symbol* sym, int address);
 int symbolExists(Node** headSymbolRef, Symbol* sym);
 
 #endif

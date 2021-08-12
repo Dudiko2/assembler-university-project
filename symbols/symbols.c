@@ -52,18 +52,26 @@ void freeSymbolList(Node* head) {
     freeListWithFunc(head, freeSymbol);
 }
 
-void storeSymbol(Node** headSymbolRef, Symbol* sym) {
+int storeSymbol(Node** headSymbolRef, Symbol* sym, int address) {
+    if (!sym)
+        return 0;
+
+    sym->address = address;
+
     if (headSymbolRef == NULL) {
         insertLast(headSymbolRef, sym);
-        return;
+        return 1;
     }
 
     if (symbolExists(headSymbolRef, sym)) {
+        printf("%s already exists\n", sym->name);
         /*msg*/
-        return;
+
+        return 0;
     }
 
     insertInfront(headSymbolRef, sym);
+    return 1;
 }
 
 int symbolExists(Node** headSymbolRef, Symbol* sym) {

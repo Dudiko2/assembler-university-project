@@ -42,28 +42,33 @@ int main(int argc, char *argv[]) {
                 continue;
 
             if (startsWith(cmd->op, '.')) {
-                printf(".guidance\n");
                 /*encode it now*/
 
                 address = DC;
                 /*update DC, note the amount updated varies unlike IC*/
             } else {
                 /*encode it after due to symbols undefined yet*/
+                address = IC;
                 IC += 4;
             }
 
-            if (sym) {
-                /*attempt to store*/
-                /*should check .entry or external before*/
-                if (strcmp(cmd->op, ".entry") == 0 || strcmp(cmd->op, ".external") == 0) {
-                    /*msg*/
+            /*attempt to store*/
+            /*should check .entry or external before*/
+            if (strcmp(cmd->op, ".entry") == 0 || strcmp(cmd->op, ".external") == 0) {
+                /*msg*/
+                freeSymbol(sym);
+            } else {
+                int stored = storeSymbol(&symbolsHead, sym, address);
+
+                if (stored)
+                    printf("%d %s\n", sym->address, sym->name);
+                else
                     freeSymbol(sym);
-                } else {
-                    storeSymbol(&symbolsHead, sym);
-                }
             }
+            /*
             printCommand(cmd);
             printf("\n");
+            */
 
             insertLast(&commandsHead, cmd);
         }
