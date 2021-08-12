@@ -8,6 +8,7 @@ converts num to a it's corresponding binary sequence/array.
 the sequence will be nDigits wide.
 terminates the array with -1.
 uses two's complement for negative numbers.
+return value needs to be free()'d after use.
 
 the given binary form of num must fit within the array.
 1 <= nDigits <= 32.
@@ -15,11 +16,25 @@ the given binary form of num must fit within the array.
 returns NULL at error.
 */
 int* toBinArray(long int num, int nDigits);
+
 long int strToInt(char* str);
+
+/*applies two's complement to a binary sequence*/
 void twosComplement(int* binArr);
+
+/*flips the digit (logical NOT) of a binary sequence*/
 void binFlip(int* binArr);
+
+/*adds one to a binary sequence*/
 void binAddOne(int* binArr);
+
+/*returns the number of bits of a binary number*/
 int binLen(int* binArr);
+
+/*
+allocates a new binary sequence.
+needs to be free()'d after use.
+*/
 int* newBinArr(int nDigits);
 
 #endif

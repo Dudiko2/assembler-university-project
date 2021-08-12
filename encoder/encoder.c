@@ -4,7 +4,6 @@
 #include <stdlib.h>
 #include <string.h>
 
-/*change to array of ints, stupid*/
 int* toBinArray(long int num, int nDigits) {
     int remainder;
     int i;
@@ -34,7 +33,6 @@ int* toBinArray(long int num, int nDigits) {
     }
 
     if (!positive) {
-        /*two's complement*/
         twosComplement(bin);
     }
 
@@ -54,7 +52,6 @@ void binFlip(int* binArr) {
     int i;
     int digit;
 
-    /*flip the digits*/
     for (i = 0; (digit = binArr[i]) != -1; i++) {
         binArr[i] = !digit;
     }
