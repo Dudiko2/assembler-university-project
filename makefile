@@ -19,3 +19,6 @@ clean:
 
 tester: $(TESTER_OBJ) $(OBJECTS) $(HEADERS)
 	$(CC) $(FLAGS) $(TESTER_OBJ) $(OBJECTS) -o $@
+
+leaks: clean $(ARGS)
+	valgrind --leak-check=yes ./$(ARGS) inputfiles/ps.as

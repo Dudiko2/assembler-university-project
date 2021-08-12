@@ -38,7 +38,9 @@ Symbol* symbolFromCommand(Command* cmd) {
     return sym;
 }
 
-void freeSymbol(Symbol* sym) {
+void freeSymbol(void* ptr) {
+    Symbol* sym = ptr;
+
     if (sym == NULL)
         return;
 
@@ -47,19 +49,7 @@ void freeSymbol(Symbol* sym) {
 }
 
 void freeSymbolList(Node* head) {
-    Node* temp;
-
-    if (head == NULL)
-        return;
-
-    while (head != NULL) {
-        temp = head->next;
-
-        freeSymbol(head->data);
-        free(head);
-
-        head = temp;
-    }
+    freeListWithFunc(head, freeSymbol);
 }
 
 void storeSymbol(Node** headSymbolRef, Symbol* sym) {

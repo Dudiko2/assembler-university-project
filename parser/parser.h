@@ -1,10 +1,11 @@
 #ifndef PARSER_H
 #define PARSER_H
 
-#define LABEL_MAX_LEN 31
+/*initial amount of args to be allocated to argument list*/
 #define ARGS_LEN 3
 
 #include "../commands/commands.h"
+#include "../globals.h"
 #include "../utils/utils.h"
 
 /*undone*/

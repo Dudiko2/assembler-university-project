@@ -14,8 +14,10 @@ Command *newCommand() {
     return cmd;
 }
 
-void freeCommand(Command *cmd) {
-    if (cmd == NULL)
+void freeCommand(void *ptr) {
+    Command *cmd = ptr;
+
+    if (!cmd)
         return;
 
     free(cmd->label);
@@ -47,16 +49,20 @@ void printCommand(Command *cmd) {
 }
 
 void freeCommandList(Node *head) {
-    Node *curr;
+    /*Node *temp;
+
     if (!head)
         return;
 
-    curr = head;
-    while (curr) {
-        Command *cmd = curr->data;
-        freeCommand(cmd);
-        curr = curr->next;
-    }
+    while (head) {
+        temp = head->next;
+        Command *cmd = head->data;
 
-    free(head);
+        freeCommand(cmd);
+        free(head);
+
+        head = temp;
+    }*/
+
+    freeListWithFunc(head, freeCommand);
 }

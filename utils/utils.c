@@ -38,6 +38,22 @@ void freeListShallow(Node *head) {
     }
 }
 
+void freeListWithFunc(Node *head, void (*func)(void *data)) {
+    Node *temp;
+
+    if (!head)
+        return;
+
+    while (head) {
+        temp = head->next;
+
+        func(head->data);
+        free(head);
+
+        head = temp;
+    }
+}
+
 void insertInfront(Node **ptrHead, void *ptrData) {
     Node *node;
 

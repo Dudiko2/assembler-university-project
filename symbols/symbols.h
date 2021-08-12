@@ -15,7 +15,7 @@ typedef struct symbol {
 
 Symbol* newSymbol();
 Symbol* symbolFromCommand(Command* cmd);
-void freeSymbol(Symbol* sym);
+void freeSymbol(void* ptr);
 void freeSymbolList(Node* head);
 void storeSymbol(Node** headSymbolRef, Symbol* sym);
 int symbolExists(Node** headSymbolRef, Symbol* sym);

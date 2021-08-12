@@ -27,6 +27,12 @@ frees an entire list using freeNodeShallowData
 void freeListShallow(Node *head);
 
 /*
+frees a list.
+each node's data is freed using FUNC.
+*/
+void freeListWithFunc(Node *head, void (*func)(void *data));
+
+/*
 takes a ref to the head of a list (ptrHead) and a pointer to some data, then puts a new node containing ptrData as the head.
 NOTE: this function does not make a copy of the data, but uses the existing data instead.
 */

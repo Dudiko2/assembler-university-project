@@ -12,8 +12,12 @@ typedef struct command {
 
 /*generates a new command structure and returns a pointer to it, or NULL if allocation fails*/
 Command *newCommand();
-/*frees the memory that was allocated for CMD by newCommand*/
-void freeCommand(Command *cmd);
+
+/*
+frees the memory that was allocated for CMD by newCommand.
+arg type must be Command*
+*/
+void freeCommand(void *ptr);
 
 void printCommand(Command *cmd);
 
