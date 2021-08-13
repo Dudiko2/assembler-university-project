@@ -37,4 +37,23 @@ needs to be free()'d after use.
 */
 int* newBinArr(int nDigits);
 
+/*
+converts a binary sequence to string
+needs to be free()'d after use.
+*/
+char* binToStr(int* binArr);
+
+/*
+converts four bits of a binary sequence, starting at index, to a hexadecimal char
+*/
+char fourbitsToHex(int* binArr, int index);
+
+/*
+converts a binary sequence to a hexadecimal string
+needs to be free()'d after use.
+*/
+char* binToHex(int* binArr);
+
+int binNegative(int* binArr);
+
 #endif

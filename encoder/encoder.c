@@ -93,3 +93,61 @@ int* newBinArr(int nDigits) {
 
     return bin;
 }
+
+char* binToStr(int* binArr) {
+    int i;
+    int len;
+    char* str;
+
+    len = binLen(binArr);
+
+    str = calloc(len + 1, sizeof(char));
+
+    for (i = 0; binArr[i] != -1; i++) {
+        str[i] = binArr[i] + '0';
+    }
+
+    return str;
+}
+
+char fourbitsToHex(int* binArr, int index) {
+    int factor = 1;
+    int res = 0;
+    int bits;
+
+    for (bits = 0; (index - bits) >= 0 && bits < 4; bits++) {
+        res += (binArr[index - bits] * factor);
+        factor *= 2;
+    }
+
+    if (res > 9) {
+        res -= 10;
+        res += 'A';
+    } else {
+        res += '0';
+    }
+
+    return res;
+}
+
+char* binToHex(int* binArr) {
+    int bits;
+    int len;
+    int i;
+    char* hex;
+
+    bits = binLen(binArr);
+    len = bits / 4;
+
+    hex = calloc(len + 1, sizeof(char));
+
+    for (i = bits - 1; i > 0; i -= 4, len--) {
+        hex[len - 1] = fourbitsToHex(binArr, i);
+    }
+
+    return hex;
+}
+
+int binNegative(int* binArr) {
+    return binArr[0];
+}
