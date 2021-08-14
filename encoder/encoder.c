@@ -155,10 +155,16 @@ int binNegative(int* binArr) {
 }
 
 Node* encodeCmd(Command* cmd) {
+    /*Should add addresses to it*/
     char* op = cmd->op;
+    char** args = cmd->arguments;
 
     if (strMatch(op, ".db")) {
-        return encodeNumSave(1, cmd->arguments);
+        return encodeNumSave(1, args);
+    } else if (strMatch(op, ".dh")) {
+        return encodeNumSave(2, args);
+    } else if (strMatch(op, ".dw")) {
+        return encodeNumSave(4, args);
     }
 
     return NULL;
@@ -178,11 +184,13 @@ static Node* encodeNumSave(int bytesPerArg, char** args) {
         /*turn num to binary using toBinArray*/
         bin = toBinArray(num, bits);
         /*insert bin into linked list*/
-        if (bin) {
-            insertLast(&head, bin);
+        if (!bin) {
+            freeListShallow(head);
+            return NULL;
         }
+
+        insertLast(&head, bin);
     }
 
-    /*return list*/
     return head;
 }
