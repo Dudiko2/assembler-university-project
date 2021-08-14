@@ -16,9 +16,11 @@ static int isComment(char *str);
 static int isString(char *str);
 static int isNumber(char *str, int mayHaveSign);
 static int isRegister(char *str);
+static int validateOperationArgs(Command *cmd);
+static int matchArgsToFormat(char **args, char *format);
 
 Command *parseCommand(char *cmdStr) {
-    char error = 0;
+    int error = 0;
     char *trimmed;
     Command *cmd = newCommand();
     Node *tokenListHead = NULL;
@@ -36,10 +38,12 @@ Command *parseCommand(char *cmdStr) {
     tokenListHead = strtokSplit(trimmed, " \t", '\"');
     error = mapTokenListToCmd(cmd, tokenListHead);
 
+    /*match op to args*/
+
     free(trimmed);
     freeListShallow(tokenListHead);
 
-    if (error) {
+    if (error || !validateOperationArgs(cmd)) {
         freeCommand(cmd);
         return NULL;
     }
@@ -222,7 +226,7 @@ static int isNumber(char *str, int mayHaveSign) {
     char c = str[i];
 
     if (mayHaveSign) {
-        if (len <= 1)
+        if ((c == '+' || c == '-') && len <= 1)
             return 0;
 
         if (c == '+' || c == '-' || isdigit(c)) {
@@ -252,4 +256,58 @@ static int isRegister(char *str) {
         return 0;
 
     return isNumber(str + 1, 0);
+}
+
+static int validateOperationArgs(Command *cmd) {
+    char *op = cmd->op;
+    char **args = cmd->arguments;
+    char **formats = getArgFormats(op);
+    int i;
+
+    /*handle null formats*/
+
+    for (i = 0; formats[i]; i++) {
+        if (matchArgsToFormat(args, formats[i]))
+            return 1;
+    }
+
+    return 0;
+}
+
+static int matchArgsToFormat(char **args, char *format) {
+    int i = 0;
+    int j = 0;
+    char *arg;
+    char formatArg;
+
+    while ((arg = args[i]) && (formatArg = format[j])) {
+        if (formatArg == '+') {
+            j--;
+            continue;
+        }
+
+        if ((formatArg == 'n' && isNumber(arg, 1)) ||
+            (formatArg == 'r' && isRegister(arg)) ||
+            (formatArg == 'l' && validLabelChars(arg, strlen(arg))) ||
+            (formatArg == 's' && isString(arg))) {
+            j++;
+        } else {
+            /*msg invalid arg*/
+            return 0;
+        }
+
+        i++;
+    }
+
+    /*too many args*/
+    if (args[i]) {
+        return 0;
+    }
+
+    /*too few args*/
+    if (format[j] && format[j] != '+') {
+        return 0;
+    }
+
+    return 1;
 }

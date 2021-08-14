@@ -36,12 +36,12 @@ static CodeOperation codeTable[] = {
 };
 
 static DataOperation dataTable[] = {
-    {".db"},
-    {".dw"},
-    {".dh"},
-    {".asciz"},
-    {".entry"},
-    {".extern"},
+    {".db", {"n+", 0}},
+    {".dw", {"n+", 0}},
+    {".dh", {"n+", 0}},
+    {".asciz", {"s", 0}},
+    {".entry", {"l", 0}},
+    {".extern", {"l", 0}},
 };
 
 int isKeyword(char* str) {
@@ -73,6 +73,21 @@ CodeOperation* getCodeOperation(char* name) {
     for (i = 0; i < CODES_NUM; i++) {
         if (strMatch(name, codeTable[i].name))
             return &(codeTable[i]);
+    }
+
+    return NULL;
+}
+
+char** getArgFormats(char* opname) {
+    int i;
+    for (i = 0; i < CODES_NUM; i++) {
+        if (strMatch(opname, codeTable[i].name))
+            return codeTable[i].argFormats;
+    }
+
+    for (i = 0; i < DATA_NUM; i++) {
+        if (strMatch(opname, dataTable[i].name))
+            return dataTable[i].argFormats;
     }
 
     return NULL;
