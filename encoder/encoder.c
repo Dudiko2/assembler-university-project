@@ -4,14 +4,16 @@
 #include <stdlib.h>
 #include <string.h>
 
-int* toBinArray(long int num, int nDigits) {
+static Node* encodeNumSave(int bytesPerArg, char** args);
+
+int* toBinArray(long int num, int bits) {
     int remainder;
     int i;
     int positive;
     int* bin;
 
-    bin = newBinArr(nDigits);
-    i = nDigits - 1;
+    bin = newBinArr(bits);
+    i = bits - 1;
 
     if (!bin)
         return NULL;
@@ -82,14 +84,14 @@ int binLen(int* binArr) {
     return i;
 }
 
-int* newBinArr(int nDigits) {
+int* newBinArr(int bits) {
     int* bin;
 
-    if (nDigits < 1 || nDigits > MAX_BITS)
+    if (bits < 1 || bits > MAX_BITS)
         return NULL;
 
-    bin = calloc(nDigits + 1, sizeof(int));
-    bin[nDigits] = -1;
+    bin = calloc(bits + 1, sizeof(int));
+    bin[bits] = -1;
 
     return bin;
 }
@@ -150,4 +152,37 @@ char* binToHex(int* binArr) {
 
 int binNegative(int* binArr) {
     return binArr[0];
+}
+
+Node* encodeCmd(Command* cmd) {
+    char* op = cmd->op;
+
+    if (strMatch(op, ".db")) {
+        return encodeNumSave(1, cmd->arguments);
+    }
+
+    return NULL;
+}
+
+static Node* encodeNumSave(int bytesPerArg, char** args) {
+    /*Should add addresses to it*/
+    Node* head = NULL;
+    int bits = bytesPerArg * 8;
+    int i;
+    long int num;
+    int* bin = NULL;
+
+    for (i = 0; args[i]; i++) {
+        /*convert arg to int and store in num*/
+        num = strToInt(args[i]);
+        /*turn num to binary using toBinArray*/
+        bin = toBinArray(num, bits);
+        /*insert bin into linked list*/
+        if (bin) {
+            insertLast(&head, bin);
+        }
+    }
+
+    /*return list*/
+    return head;
 }
