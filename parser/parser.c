@@ -258,7 +258,7 @@ static int isRegister(char *str) {
 
     num = strToInt(str + 1);
 
-    return isNumber(str + 1, 0) /*&& num >= 0 && num < 32*/;
+    return isNumber(str + 1, 0) && num >= 0 && num < 32;
 }
 
 static int validateOperationArgs(Command *cmd) {
