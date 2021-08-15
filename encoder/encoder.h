@@ -19,7 +19,7 @@ the given binary form of num must fit within the array.
 
 returns NULL at error.
 */
-int* toBinArray(long int num, int bits);
+int* toBinArray(long int num, int bits, int useTwosComp);
 
 /*applies two's complement to a binary sequence*/
 void twosComplement(int* binArr);
