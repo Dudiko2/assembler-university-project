@@ -81,4 +81,6 @@ int endsWith(char *str, int c);
 
 int strMatch(char *str1, char *str2);
 
+long int strToInt(char *str);
+
 #endif

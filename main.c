@@ -63,10 +63,9 @@ int main(int argc, char *argv[]) {
                 if (!stored)
                     freeSymbol(sym);
             }
-            /*
+
             printCommand(cmd);
             printf("\n");
-            */
 
             insertLast(&commandsHead, cmd);
         }

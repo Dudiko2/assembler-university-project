@@ -248,6 +248,7 @@ static int isNumber(char *str, int mayHaveSign) {
 
 static int isRegister(char *str) {
     int len = strlen(str);
+    int num;
 
     if (len <= 1)
         return 0;
@@ -255,7 +256,9 @@ static int isRegister(char *str) {
     if (str[0] != '$')
         return 0;
 
-    return isNumber(str + 1, 0);
+    num = strToInt(str + 1);
+
+    return isNumber(str + 1, 0) /*&& num >= 0 && num < 32*/;
 }
 
 static int validateOperationArgs(Command *cmd) {

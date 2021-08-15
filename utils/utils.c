@@ -235,3 +235,7 @@ int endsWith(char *str, int c) {
 int strMatch(char *str1, char *str2) {
     return strcmp(str1, str2) == 0;
 }
+
+long int strToInt(char *str) {
+    return strtol(str, (char **)NULL, 10);
+}

@@ -21,8 +21,6 @@ returns NULL at error.
 */
 int* toBinArray(long int num, int bits);
 
-long int strToInt(char* str);
-
 /*applies two's complement to a binary sequence*/
 void twosComplement(int* binArr);
 

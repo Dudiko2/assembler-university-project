@@ -43,10 +43,6 @@ int* toBinArray(long int num, int bits) {
     return bin;
 }
 
-long int strToInt(char* str) {
-    return strtol(str, (char**)NULL, 10);
-}
-
 void twosComplement(int* binArr) {
     binFlip(binArr);
     binAddOne(binArr);
