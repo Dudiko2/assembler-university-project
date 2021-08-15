@@ -4,7 +4,9 @@
 #include <stdlib.h>
 #include <string.h>
 
-static Node* encodeNumSave(int bytesPerArg, char** args);
+static Node* encodeNumSave(int bytesPerArg, char** args, int* bytesUsed);
+static Node* encodeStringSave(char* ascizStr, int* bytesUsed);
+static Node* encodeOperationR(int opcode, int funct, char* rs, char* rt, char* rd);
 
 int* toBinArray(long int num, int bits) {
     int remainder;
@@ -154,24 +156,31 @@ int binNegative(int* binArr) {
     return binArr[0];
 }
 
-Node* encodeCmd(Command* cmd) {
-    /*Should add addresses to it*/
+int encodeCmd(Command* cmd, Node** list) {
     char* op = cmd->op;
     char** args = cmd->arguments;
+    int bytesUsed = 0;
+    Node* encoded = NULL;
 
     if (strMatch(op, ".db")) {
-        return encodeNumSave(1, args);
+        encoded = encodeNumSave(1, args, &bytesUsed);
     } else if (strMatch(op, ".dh")) {
-        return encodeNumSave(2, args);
+        encoded = encodeNumSave(2, args, &bytesUsed);
     } else if (strMatch(op, ".dw")) {
-        return encodeNumSave(4, args);
+        encoded = encodeNumSave(4, args, &bytesUsed);
+    } else if (strMatch(op, ".asciz")) {
+        encoded = encodeStringSave(args[0], &bytesUsed);
     }
 
-    return NULL;
+    if (encoded) {
+        insertNodeLast(list, encoded);
+        return bytesUsed;
+    }
+
+    return 0;
 }
 
-static Node* encodeNumSave(int bytesPerArg, char** args) {
-    /*Should add addresses to it*/
+static Node* encodeNumSave(int bytesPerArg, char** args, int* bytesUsed) {
     Node* head = NULL;
     int bits = bytesPerArg * 8;
     int i;
@@ -192,5 +201,40 @@ static Node* encodeNumSave(int bytesPerArg, char** args) {
         insertLast(&head, bin);
     }
 
+    *bytesUsed += (i * bytesPerArg);
+
     return head;
 }
+
+static Node* encodeStringSave(char* ascizStr, int* bytesUsed) {
+    Node* head = NULL;
+    int i;
+    int* bin = NULL;
+    int c;
+    int byte = 8;
+
+    for (i = 1; (c = ascizStr[i]) != '\"'; i++) {
+        bin = toBinArray(c, byte);
+
+        if (!bin) {
+            freeListShallow(head);
+            return NULL;
+        }
+
+        insertLast(&head, bin);
+    }
+
+    /*insert \0 at end of string*/
+    bin = toBinArray(0, byte);
+    if (!bin) {
+        freeListShallow(head);
+        return NULL;
+    }
+
+    insertLast(&head, bin);
+    *bytesUsed += (i);
+
+    return head;
+}
+
+static Node* encodeOperationR(int opcode, int funct, char* rs, char* rt, char* rd) {}

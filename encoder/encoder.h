@@ -61,6 +61,10 @@ char* binToHex(int* binArr);
 
 int binNegative(int* binArr);
 
-Node* encodeCmd(Command* cmd);
+/*
+encodes cmd to a binary sequence stored inside a node, then adds the node to list.
+returns the amount of required to store the encoded data in the assembly program
+*/
+int encodeCmd(Command* cmd, Node** list);
 
 #endif

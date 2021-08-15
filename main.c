@@ -78,13 +78,12 @@ int main(int argc, char *argv[]) {
 
             currCmd = currCmd->next;
         }
+        /*Generate output files if no errors occurred*/
 
         /* CLEANUP */
         fclose(srcFile);
         freeSymbolList(symbolsHead);
         freeCommandList(commandsHead);
-
-        /*Generate output files if no errors occurred*/
     }
 
     free(filenames);
