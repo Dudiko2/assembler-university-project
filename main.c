@@ -2,11 +2,15 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include "./encoder/encoder.h"
 #include "./globals.h"
 #include "./io/io.h"
 #include "./operations/operations.h"
 #include "./parser/parser.h"
 #include "./symbols/symbols.h"
+
+/*for debug only*/
+static void printBinList(Node *listhead);
 
 int main(int argc, char *argv[]) {
     int i;
@@ -22,6 +26,8 @@ int main(int argc, char *argv[]) {
         FILE *srcFile = readFile(filenames[i]);
         Node *symbolsHead = NULL;
         Node *commandsHead = NULL;
+        Node *codeImageHead = NULL;
+        Node *dataImageHead = NULL;
         Node *currCmd = NULL;
         unsigned int IC = 100;
         unsigned int DC = 0;
@@ -42,14 +48,11 @@ int main(int argc, char *argv[]) {
                 continue;
 
             if (startsWith(cmd->op, '.')) {
-                /*encode it now*/
-
                 address = DC;
-                /*update DC, note the amount updated varies unlike IC*/
+
+                DC += encodeCmd(cmd, &dataImageHead);
             } else {
                 /*encode it after due to symbols undefined yet*/
-                address = IC;
-                IC += 4;
             }
 
             /*attempt to store*/
@@ -79,13 +82,32 @@ int main(int argc, char *argv[]) {
         }
         /*Generate output files if no errors occurred*/
 
+        /*print for debug*/
+        printBinList(dataImageHead);
+
         /* CLEANUP */
         closeFile();
         freeSymbolList(symbolsHead);
         freeCommandList(commandsHead);
+        freeListShallow(dataImageHead);
+        freeListShallow(codeImageHead);
     }
 
     free(filenames);
 
     return 0;
+}
+
+static void printBinList(Node *listhead) {
+    Node *curr = listhead;
+    while (curr) {
+        int i;
+        int *bin = curr->data;
+        for (i = 0; bin[i] != -1; i++) {
+            printf("%d", bin[i]);
+        }
+        printf("\n");
+
+        curr = curr->next;
+    }
 }

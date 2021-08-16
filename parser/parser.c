@@ -265,11 +265,16 @@ static int validateOperationArgs(Command *cmd) {
     char **args = cmd->arguments;
     char **formats = getArgFormats(op);
     int i;
+    int status;
 
     for (i = 0; formats[i]; i++) {
-        if (matchArgsToFormat(args, formats[i]))
+        status = matchArgsToFormat(args, formats[i]);
+
+        if (!status)
             return 1;
     }
+
+    printErrorMessage(status, "FIX THIS!!");
 
     return 0;
 }
@@ -292,22 +297,19 @@ static int matchArgsToFormat(char **args, char *format) {
             (formatArg == 's' && isString(arg))) {
             j++;
         } else {
-            printErrorMessage(INVALID_ARG, arg);
-            return 0;
+            return INVALID_ARG;
         }
 
         i++;
     }
 
     if (args[i]) {
-        printErrorMessage(TOO_MANY_ARGS, "");
-        return 0;
+        return TOO_MANY_ARGS;
     }
 
     if (format[j] && format[j] != '+') {
-        printErrorMessage(MISSING_ARGS, "");
-        return 0;
+        return MISSING_ARGS;
     }
 
-    return 1;
+    return 0;
 }

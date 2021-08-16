@@ -156,13 +156,14 @@ int binNegative(int* binArr) {
     return binArr[0];
 }
 
-int encodeCmd(Command* cmd, Node** list) {
+int encodeCmd(Command* cmd, Node** encodedList) {
     char* op = cmd->op;
     char** args = cmd->arguments;
     int bytesUsed = 0;
     int rs;
     int rt;
     int rd;
+    int immed;
     Node* encoded = NULL;
     CodeOperation* codeOp;
 
@@ -195,10 +196,22 @@ int encodeCmd(Command* cmd, Node** list) {
 
         encoded = encodeOperationR(codeOp->opcode, codeOp->funct, rs, 0, rd);
         bytesUsed = 4;
+    } else if (strMatch(op, "addi") ||
+               strMatch(op, "subi") ||
+               strMatch(op, "andi") ||
+               strMatch(op, "ori") ||
+               strMatch(op, "nori")) {
+        codeOp = getCodeOperation(op);
+        rs = strToInt(args[0] + 1);
+        rt = strToInt(args[2] + 1);
+        immed = strToInt(args[1]);
+
+        encoded = encodeOperationI(codeOp->opcode, rs, rt, immed);
+        bytesUsed = 4;
     }
 
     if (encoded) {
-        insertNodeLast(list, encoded);
+        insertNodeLast(encodedList, encoded);
         return bytesUsed;
     }
 
