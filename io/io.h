@@ -17,7 +17,8 @@ typedef enum errorCode {
     MISSING_ARGS,
     COMMA_START,
     COMMA_END,
-    SYMBOL_EXISTS
+    SYMBOL_EXISTS,
+    SYMBOL_DOES_NOT_EXIST
 } errorCode;
 
 /*

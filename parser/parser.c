@@ -14,8 +14,6 @@ static int validLabelChars(char *label, int len);
 static int isComment(char *str);
 /*returns whether STR is a properly declared string (according to the spec)*/
 static int isString(char *str);
-static int isNumber(char *str, int mayHaveSign);
-static int isRegister(char *str);
 static int validateOperationArgs(Command *cmd);
 static int matchArgsToFormat(char **args, char *format);
 
@@ -217,47 +215,6 @@ static int isComment(char *str) {
 
 static int isString(char *str) {
     return startsWith(str, '\"') && endsWith(str, '\"');
-}
-
-static int isNumber(char *str, int mayHaveSign) {
-    int i = 0;
-    int len = strlen(str);
-    char c = str[i];
-
-    if (mayHaveSign) {
-        if ((c == '+' || c == '-') && len <= 1)
-            return 0;
-
-        if (c == '+' || c == '-' || isdigit(c)) {
-            i++;
-        } else {
-            return 0;
-        }
-    }
-
-    while ((c = str[i])) {
-        if (!isdigit(c))
-            return 0;
-
-        i++;
-    }
-
-    return 1;
-}
-
-static int isRegister(char *str) {
-    int len = strlen(str);
-    int num;
-
-    if (len <= 1)
-        return 0;
-
-    if (str[0] != '$')
-        return 0;
-
-    num = strToInt(str + 1);
-
-    return isNumber(str + 1, 0) && num >= 0 && num < 32;
 }
 
 static int validateOperationArgs(Command *cmd) {

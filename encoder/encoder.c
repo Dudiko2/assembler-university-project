@@ -11,7 +11,7 @@ static Node* encodeNumSave(int bytesPerArg, char** args, int* bytesUsed);
 static Node* encodeStringSave(char* ascizStr, int* bytesUsed);
 static Node* encodeOperationR(int opcode, int funct, int rs, int rt, int rd);
 static Node* encodeOperationI(int opcode, int rs, int rt, int immed);
-static Node* encodeOperationJ(int opcode, int reg, int address);
+static Node* encodeOperationJ(int opcode, int reg, unsigned int address);
 
 int* toBinArray(long int num, int bits, int useTwosComp) {
     int remainder;
@@ -166,6 +166,8 @@ int encodeCmd(Command* cmd, Node** encodedList, Node** symbolTable, unsigned int
     int rt;
     int rd;
     int immed;
+    int reg;
+    unsigned int JAddress;
     Node* encoded = NULL;
     CodeOperation* codeOp = getCodeOperation(op);
     Symbol* sym = NULL;
@@ -215,10 +217,15 @@ int encodeCmd(Command* cmd, Node** encodedList, Node** symbolTable, unsigned int
         rs = strToInt(args[0] + 1);
         rt = strToInt(args[1] + 1);
         sym = getSymbol(*symbolTable, args[2]);
-        immed = (sym->address) - address;
 
-        encoded = encodeOperationI(codeOp->opcode, rs, rt, immed);
-        bytesUsed = 4;
+        if (sym) {
+            immed = (sym->address) - address;
+
+            encoded = encodeOperationI(codeOp->opcode, rs, rt, immed);
+            bytesUsed = 4;
+        } else {
+            printErrorMessage(SYMBOL_DOES_NOT_EXIST, args[2]);
+        }
     } else if (strMatch(op, "lb") ||
                strMatch(op, "sb") ||
                strMatch(op, "lw") ||
@@ -230,6 +237,24 @@ int encodeCmd(Command* cmd, Node** encodedList, Node** symbolTable, unsigned int
         immed = strToInt(args[1]);
 
         encoded = encodeOperationI(codeOp->opcode, rs, rt, immed);
+        bytesUsed = 4;
+    } else if (strMatch(op, "jmp")) {
+        if (isRegister(args[0])) {
+            reg = 1;
+            JAddress = strToInt(args[0] + 1);
+        } else {
+            reg = 0;
+            sym = getSymbol(*symbolTable, args[0]);
+
+            if (!sym) {
+                printErrorMessage(SYMBOL_DOES_NOT_EXIST, args[0]);
+                return 0;
+            }
+
+            JAddress = sym->address;
+        }
+
+        encoded = encodeOperationJ(codeOp->opcode, reg, JAddress);
         bytesUsed = 4;
     }
 
@@ -414,7 +439,7 @@ static Node* encodeOperationI(int opcode, int rs, int rt, int immed) {
     return nodify(bin);
 }
 
-static Node* encodeOperationJ(int opcode, int reg, int address) {
+static Node* encodeOperationJ(int opcode, int reg, unsigned int address) {
     int* binOpcode = NULL;
     int* binReg = NULL;
     int* binAddress = NULL;

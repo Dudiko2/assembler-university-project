@@ -98,6 +98,11 @@ void printErrorMessage(errorCode msgType, char *str) {
             showLineNum = 1;
             break;
 
+        case SYMBOL_DOES_NOT_EXIST:
+            strcpy(errMsg, "Undefined symbol %s");
+            showLineNum = 1;
+            break;
+
         default:
             break;
     }

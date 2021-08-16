@@ -239,3 +239,44 @@ int strMatch(char *str1, char *str2) {
 long int strToInt(char *str) {
     return strtol(str, (char **)NULL, 10);
 }
+
+int isRegister(char *str) {
+    int len = strlen(str);
+    int num;
+
+    if (len <= 1)
+        return 0;
+
+    if (str[0] != '$')
+        return 0;
+
+    num = strToInt(str + 1);
+
+    return isNumber(str + 1, 0) && num >= 0 && num < 32;
+}
+
+int isNumber(char *str, int mayHaveSign) {
+    int i = 0;
+    int len = strlen(str);
+    char c = str[i];
+
+    if (mayHaveSign) {
+        if ((c == '+' || c == '-') && len <= 1)
+            return 0;
+
+        if (c == '+' || c == '-' || isdigit(c)) {
+            i++;
+        } else {
+            return 0;
+        }
+    }
+
+    while ((c = str[i])) {
+        if (!isdigit(c))
+            return 0;
+
+        i++;
+    }
+
+    return 1;
+}

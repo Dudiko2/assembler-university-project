@@ -83,4 +83,8 @@ int strMatch(char *str1, char *str2);
 
 long int strToInt(char *str);
 
+int isRegister(char *str);
+
+int isNumber(char *str, int mayHaveSign);
+
 #endif
