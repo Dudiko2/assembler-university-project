@@ -256,6 +256,19 @@ int encodeCmd(Command* cmd, Node** encodedList, Node** symbolTable, unsigned int
 
         encoded = encodeOperationJ(codeOp->opcode, reg, JAddress);
         bytesUsed = 4;
+    } else if (strMatch(op, "la")) {
+        reg = 0;
+        sym = getSymbol(*symbolTable, args[0]);
+
+        if (!sym) {
+            printErrorMessage(SYMBOL_DOES_NOT_EXIST, args[0]);
+            return 0;
+        }
+
+        JAddress = sym->address;
+
+        encoded = encodeOperationJ(codeOp->opcode, reg, JAddress);
+        bytesUsed = 4;
     }
 
     if (encoded) {
@@ -452,7 +465,7 @@ static Node* encodeOperationJ(int opcode, int reg, unsigned int address) {
 
     binOpcode = toBinArray(opcode, opcodeLen, 0);
     binReg = toBinArray(reg, regLen, 0);
-    binAddress = toBinArray(address, addressLen, 1);
+    binAddress = toBinArray(address, addressLen, 0);
 
     bin = toBinArray(0, MAX_BITS, 0);
     if (!binOpcode || !binReg || !binAddress || !bin) {

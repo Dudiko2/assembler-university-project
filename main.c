@@ -85,10 +85,11 @@ int main(int argc, char *argv[]) {
         while (currCmd) {
             /*encode commands*/
             Command *cmd = currCmd->data;
-            if (!startsWith(cmd->op, '.'))
+            if (!startsWith(cmd->op, '.')) {
                 IC += encodeCmd(cmd, &codeImageHead, &symbolsHead, IC);
-
-            /*set entries and externals*/
+            } else {
+                /*set entries*/
+            }
 
             currCmd = currCmd->next;
         }
