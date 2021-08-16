@@ -51,7 +51,7 @@ int main(int argc, char *argv[]) {
             if (startsWith(cmd->op, '.')) {
                 address = DC;
 
-                DC += encodeCmd(cmd, &dataImageHead);
+                DC += encodeCmd(cmd, &dataImageHead, NULL, DC);
             } else {
                 /*encode it after due to symbols undefined yet*/
                 address = IC;
@@ -80,9 +80,13 @@ int main(int argc, char *argv[]) {
         updateDataAdresses(symbolsHead, IC);
 
         /* PHASE 2 */
+        IC = 100;
         currCmd = commandsHead;
         while (currCmd) {
             /*encode commands*/
+            Command *cmd = currCmd->data;
+            if (!startsWith(cmd->op, '.'))
+                IC += encodeCmd(cmd, &codeImageHead, &symbolsHead, IC);
 
             /*set entries and externals*/
 
@@ -91,6 +95,9 @@ int main(int argc, char *argv[]) {
         /*Generate output files if no errors occurred*/
 
         /*print for debug*/
+        puts("\n\ncode image\n");
+        printBinList(codeImageHead);
+        puts("\n\ndata image\n");
         printBinList(dataImageHead);
         printSymbolTable(symbolsHead);
 

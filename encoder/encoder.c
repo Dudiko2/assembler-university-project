@@ -5,11 +5,13 @@
 #include <string.h>
 
 #include "../io/io.h"
+#include "../symbols/symbols.h"
 
 static Node* encodeNumSave(int bytesPerArg, char** args, int* bytesUsed);
 static Node* encodeStringSave(char* ascizStr, int* bytesUsed);
 static Node* encodeOperationR(int opcode, int funct, int rs, int rt, int rd);
 static Node* encodeOperationI(int opcode, int rs, int rt, int immed);
+static Node* encodeOperationJ(int opcode, int reg, int address);
 
 int* toBinArray(long int num, int bits, int useTwosComp) {
     int remainder;
@@ -156,7 +158,7 @@ int binNegative(int* binArr) {
     return binArr[0];
 }
 
-int encodeCmd(Command* cmd, Node** encodedList) {
+int encodeCmd(Command* cmd, Node** encodedList, Node** symbolTable, unsigned int address) {
     char* op = cmd->op;
     char** args = cmd->arguments;
     int bytesUsed = 0;
@@ -165,7 +167,8 @@ int encodeCmd(Command* cmd, Node** encodedList) {
     int rd;
     int immed;
     Node* encoded = NULL;
-    CodeOperation* codeOp;
+    CodeOperation* codeOp = getCodeOperation(op);
+    Symbol* sym = NULL;
 
     if (strMatch(op, ".db")) {
         encoded = encodeNumSave(1, args, &bytesUsed);
@@ -180,7 +183,6 @@ int encodeCmd(Command* cmd, Node** encodedList) {
                strMatch(op, "and") ||
                strMatch(op, "or") ||
                strMatch(op, "nor")) {
-        codeOp = getCodeOperation(op);
         rs = strToInt(args[0] + 1);
         rt = strToInt(args[1] + 1);
         rd = strToInt(args[2] + 1);
@@ -190,7 +192,6 @@ int encodeCmd(Command* cmd, Node** encodedList) {
     } else if (strMatch(op, "move") ||
                strMatch(op, "mvhi") ||
                strMatch(op, "mvlo")) {
-        codeOp = getCodeOperation(op);
         rs = strToInt(args[0] + 1);
         rd = strToInt(args[1] + 1);
 
@@ -201,7 +202,29 @@ int encodeCmd(Command* cmd, Node** encodedList) {
                strMatch(op, "andi") ||
                strMatch(op, "ori") ||
                strMatch(op, "nori")) {
-        codeOp = getCodeOperation(op);
+        rs = strToInt(args[0] + 1);
+        rt = strToInt(args[2] + 1);
+        immed = strToInt(args[1]);
+
+        encoded = encodeOperationI(codeOp->opcode, rs, rt, immed);
+        bytesUsed = 4;
+    } else if (strMatch(op, "beq") ||
+               strMatch(op, "bne") ||
+               strMatch(op, "blt") ||
+               strMatch(op, "bgt")) {
+        rs = strToInt(args[0] + 1);
+        rt = strToInt(args[1] + 1);
+        sym = getSymbol(*symbolTable, args[2]);
+        immed = (sym->address) - address;
+
+        encoded = encodeOperationI(codeOp->opcode, rs, rt, immed);
+        bytesUsed = 4;
+    } else if (strMatch(op, "lb") ||
+               strMatch(op, "sb") ||
+               strMatch(op, "lw") ||
+               strMatch(op, "sw") ||
+               strMatch(op, "lh") ||
+               strMatch(op, "sh")) {
         rs = strToInt(args[0] + 1);
         rt = strToInt(args[2] + 1);
         immed = strToInt(args[1]);
@@ -212,6 +235,7 @@ int encodeCmd(Command* cmd, Node** encodedList) {
 
     if (encoded) {
         insertNodeLast(encodedList, encoded);
+
         return bytesUsed;
     }
 
@@ -386,6 +410,50 @@ static Node* encodeOperationI(int opcode, int rs, int rt, int immed) {
     free(binRs);
     free(binRt);
     free(binImmed);
+
+    return nodify(bin);
+}
+
+static Node* encodeOperationJ(int opcode, int reg, int address) {
+    int* binOpcode = NULL;
+    int* binReg = NULL;
+    int* binAddress = NULL;
+    int* bin = NULL;
+    int opcodeLen = 6;
+    int regLen = 1;
+    int addressLen = 25;
+    int i;
+    int j;
+
+    binOpcode = toBinArray(opcode, opcodeLen, 0);
+    binReg = toBinArray(reg, regLen, 0);
+    binAddress = toBinArray(address, addressLen, 1);
+
+    bin = toBinArray(0, MAX_BITS, 0);
+    if (!binOpcode || !binReg || !binAddress || !bin) {
+        free(binOpcode);
+        free(binReg);
+        free(binAddress);
+        free(bin);
+
+        return NULL;
+    }
+
+    for (i = 0; binOpcode[i] != -1; i++) {
+        bin[i] = binOpcode[i];
+    }
+
+    for (j = 0; binReg[j] != -1; i++, j++) {
+        bin[i] = binReg[j];
+    }
+
+    for (j = 0; binAddress[j] != -1; i++, j++) {
+        bin[i] = binAddress[j];
+    }
+
+    free(binOpcode);
+    free(binReg);
+    free(binAddress);
 
     return nodify(bin);
 }
