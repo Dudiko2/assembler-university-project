@@ -26,7 +26,6 @@ Command *parseCommand(char *cmdStr) {
     Node *tokenListHead = NULL;
 
     trimmed = trim(cmdStr);
-    /*handle cmd max length*/
 
     /*nothing to parse */
     if (isComment(trimmed) || isEmptyStr(trimmed)) {
@@ -37,8 +36,6 @@ Command *parseCommand(char *cmdStr) {
 
     tokenListHead = strtokSplit(trimmed, " \t", '\"');
     error = mapTokenListToCmd(cmd, tokenListHead);
-
-    /*match op to args*/
 
     free(trimmed);
     freeListShallow(tokenListHead);
@@ -93,21 +90,21 @@ char *parseLabel(char *str) {
 
     /*invalid label, return NULL*/
     if (!validLabelChars(label, len - 1)) {
-        /*msg*/
+        printErrorMessage(INVALID_LABEL_CHARS, label);
         free(label);
         return NULL;
     }
 
     /*label too long, NULL*/
     if (strlen(label) > LABEL_MAX_LEN) {
-        /*msg*/
+        printErrorMessage(LONG_LABEL, label);
         free(label);
         return NULL;
     }
 
     /*invalid token, NULL*/
     if (isKeyword(label)) {
-        /*msg*/
+        printErrorMessage(INVALID_LABEL, label);
         free(label);
         return NULL;
     }
@@ -119,7 +116,7 @@ char *parseOperation(char *str) {
     char *op;
 
     if (!isKeyword(str)) {
-        /*msg*/
+        printErrorMessage(INVALID_OPERATION, str);
         return NULL;
     }
 
@@ -143,6 +140,7 @@ char **parseArgumentList(Node *token) {
 
     /*handle comma at beginning and end of args*/
     if (startsWith(token->data, ',')) {
+        printErrorMessage(COMMA_START, "");
         freeStringArray(arguments);
         return NULL;
     }
@@ -151,6 +149,7 @@ char **parseArgumentList(Node *token) {
         char *data = token->data;
 
         if (token->next == NULL && endsWith(data, ',')) {
+            printErrorMessage(COMMA_END, "");
             freeStringArray(arguments);
             freeListShallow(head);
 
@@ -267,8 +266,6 @@ static int validateOperationArgs(Command *cmd) {
     char **formats = getArgFormats(op);
     int i;
 
-    /*handle null formats*/
-
     for (i = 0; formats[i]; i++) {
         if (matchArgsToFormat(args, formats[i]))
             return 1;
@@ -295,20 +292,20 @@ static int matchArgsToFormat(char **args, char *format) {
             (formatArg == 's' && isString(arg))) {
             j++;
         } else {
-            /*msg invalid arg*/
+            printErrorMessage(INVALID_ARG, arg);
             return 0;
         }
 
         i++;
     }
 
-    /*too many args*/
     if (args[i]) {
+        printErrorMessage(TOO_MANY_ARGS, "");
         return 0;
     }
 
-    /*too few args*/
     if (format[j] && format[j] != '+') {
+        printErrorMessage(MISSING_ARGS, "");
         return 0;
     }
 

@@ -4,6 +4,7 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include "../io/io.h"
 #include "../operations/operations.h"
 #include "../utils/utils.h"
 
@@ -64,8 +65,7 @@ int storeSymbol(Node** headSymbolRef, Symbol* sym, int address) {
     }
 
     if (symbolExists(headSymbolRef, sym)) {
-        printf("%s already exists\n", sym->name);
-        /*msg*/
+        printErrorMessage(SYMBOL_EXISTS, sym->name);
 
         return 0;
     }

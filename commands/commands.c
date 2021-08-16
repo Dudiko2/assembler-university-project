@@ -49,20 +49,5 @@ void printCommand(Command *cmd) {
 }
 
 void freeCommandList(Node *head) {
-    /*Node *temp;
-
-    if (!head)
-        return;
-
-    while (head) {
-        temp = head->next;
-        Command *cmd = head->data;
-
-        freeCommand(cmd);
-        free(head);
-
-        head = temp;
-    }*/
-
     freeListWithFunc(head, freeCommand);
 }

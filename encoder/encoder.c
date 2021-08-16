@@ -4,6 +4,8 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include "../io/io.h"
+
 static Node* encodeNumSave(int bytesPerArg, char** args, int* bytesUsed);
 static Node* encodeStringSave(char* ascizStr, int* bytesUsed);
 static Node* encodeOperationR(int opcode, int funct, int rs, int rt, int rd);

@@ -10,15 +10,16 @@
 
 int main(int argc, char *argv[]) {
     int i;
-    /* For temporary line storage */
-    char temp[MAX_COMMAND_LEN];
     /* Get an array of valid file name strings */
     char **filenames = getFilenamesFromArgs(argc, argv);
-    if (filenames == NULL) return 0;
+    if (!filenames)
+        return 0;
 
     /* Iterate over all valid file names */
     for (i = 0; filenames[i]; i++) {
-        FILE *srcFile = fopen(filenames[i], "r");
+        /* For temporary line storage */
+        char line[MAX_COMMAND_LEN];
+        FILE *srcFile = readFile(filenames[i]);
         Node *symbolsHead = NULL;
         Node *commandsHead = NULL;
         Node *currCmd = NULL;
@@ -27,13 +28,12 @@ int main(int argc, char *argv[]) {
 
         if (!srcFile) {
             /* Error, skip to the next file name */
-            printErrorMessage(FILE_OPEN_FAIL, filenames[i]);
             continue;
         }
 
         /* PHASE 1 */
-        while (fgets(temp, MAX_COMMAND_LEN, srcFile)) {
-            Command *cmd = parseCommand(temp);
+        while (readNextLine(line)) {
+            Command *cmd = parseCommand(line);
             Symbol *sym = symbolFromCommand(cmd);
             /*to save temp values of DC or IC*/
             int address = 0;
@@ -55,7 +55,7 @@ int main(int argc, char *argv[]) {
             /*attempt to store*/
             /*should check .entry or external before*/
             if (strMatch(cmd->op, ".entry") || strMatch(cmd->op, ".external")) {
-                /*msg*/
+                /*warning msg*/
                 freeSymbol(sym);
             } else {
                 int stored = storeSymbol(&symbolsHead, sym, address);
@@ -63,9 +63,9 @@ int main(int argc, char *argv[]) {
                 if (!stored)
                     freeSymbol(sym);
             }
-
+            /*
             printCommand(cmd);
-            printf("\n");
+            printf("\n");*/
 
             insertLast(&commandsHead, cmd);
         }
@@ -80,7 +80,7 @@ int main(int argc, char *argv[]) {
         /*Generate output files if no errors occurred*/
 
         /* CLEANUP */
-        fclose(srcFile);
+        closeFile();
         freeSymbolList(symbolsHead);
         freeCommandList(commandsHead);
     }

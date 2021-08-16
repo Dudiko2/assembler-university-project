@@ -1,13 +1,24 @@
 #ifndef IO_H
 #define IO_H
 
+#include <stdio.h>
+
 #define AS_EXT_STR ".as"
 
-typedef enum errorMessage {
+typedef enum errorCode {
     INVALID_FNAME,
     FILE_OPEN_FAIL,
-    INVALID_LABEL
-} errorMessage;
+    INVALID_LABEL,
+    INVALID_LABEL_CHARS,
+    LONG_LABEL,
+    INVALID_OPERATION,
+    INVALID_ARG,
+    TOO_MANY_ARGS,
+    MISSING_ARGS,
+    COMMA_START,
+    COMMA_END,
+    SYMBOL_EXISTS
+} errorCode;
 
 /*
     parses the command line arguments and returns the valid filenames in a string array.
@@ -15,6 +26,12 @@ typedef enum errorMessage {
 */
 char **getFilenamesFromArgs(int argc, char *argv[]);
 
-void printErrorMessage(errorMessage msgType, char *str);
+void printErrorMessage(errorCode msgType, char *str);
+
+FILE *readFile(char *name);
+
+char *readNextLine(char *line);
+
+void closeFile();
 
 #endif
