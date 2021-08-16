@@ -94,7 +94,7 @@ void printErrorMessage(errorCode msgType, char *str) {
             break;
 
         case SYMBOL_EXISTS:
-            strcpy(errMsg, "Symbol '%s' already defined");
+            strcpy(errMsg, "Symbol '%s' is already defined");
             showLineNum = 1;
             break;
 

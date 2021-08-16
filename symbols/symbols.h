@@ -14,10 +14,19 @@ typedef struct symbol {
 } Symbol;
 
 Symbol* newSymbol();
+
 Symbol* symbolFromCommand(Command* cmd);
+
 void freeSymbol(void* ptr);
+
 void freeSymbolList(Node* head);
+
 int storeSymbol(Node** headSymbolRef, Symbol* sym, int address);
-int symbolExists(Node** headSymbolRef, Symbol* sym);
+
+int symbolExists(Node* headSymbol, Symbol* sym);
+
+void updateDataAdresses(Node* symHead, int ICF);
+
+Symbol* getSymbol(Node* symHead, char* name);
 
 #endif

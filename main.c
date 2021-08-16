@@ -11,6 +11,7 @@
 
 /*for debug only*/
 static void printBinList(Node *listhead);
+static void printSymbolTable(Node *head);
 
 int main(int argc, char *argv[]) {
     int i;
@@ -53,6 +54,8 @@ int main(int argc, char *argv[]) {
                 DC += encodeCmd(cmd, &dataImageHead);
             } else {
                 /*encode it after due to symbols undefined yet*/
+                address = IC;
+                IC += 4;
             }
 
             /*attempt to store*/
@@ -73,10 +76,15 @@ int main(int argc, char *argv[]) {
             insertLast(&commandsHead, cmd);
         }
 
+        /*Update data adresses in symbol table*/
+        updateDataAdresses(symbolsHead, IC);
+
         /* PHASE 2 */
         currCmd = commandsHead;
         while (currCmd) {
             /*encode commands*/
+
+            /*set entries and externals*/
 
             currCmd = currCmd->next;
         }
@@ -84,6 +92,7 @@ int main(int argc, char *argv[]) {
 
         /*print for debug*/
         printBinList(dataImageHead);
+        printSymbolTable(symbolsHead);
 
         /* CLEANUP */
         closeFile();
@@ -107,6 +116,19 @@ static void printBinList(Node *listhead) {
             printf("%d", bin[i]);
         }
         printf("\n");
+
+        curr = curr->next;
+    }
+}
+
+static void printSymbolTable(Node *head) {
+    Node *curr = head;
+    Symbol *sym;
+
+    printf("\nSYMBOLS:\n");
+    while (curr) {
+        sym = curr->data;
+        printf("%5d | %s\n", sym->address, sym->name);
 
         curr = curr->next;
     }

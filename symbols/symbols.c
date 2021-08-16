@@ -64,7 +64,7 @@ int storeSymbol(Node** headSymbolRef, Symbol* sym, int address) {
         return 1;
     }
 
-    if (symbolExists(headSymbolRef, sym)) {
+    if (symbolExists(*headSymbolRef, sym)) {
         printErrorMessage(SYMBOL_EXISTS, sym->name);
 
         return 0;
@@ -74,13 +74,13 @@ int storeSymbol(Node** headSymbolRef, Symbol* sym, int address) {
     return 1;
 }
 
-int symbolExists(Node** headSymbolRef, Symbol* sym) {
+int symbolExists(Node* headSymbol, Symbol* sym) {
     Node* symNode;
     Symbol* temp;
 
-    symNode = *headSymbolRef;
+    symNode = headSymbol;
 
-    while (symNode != NULL) {
+    while (symNode) {
         temp = symNode->data;
         if (strMatch(temp->name, sym->name)) {
             return 1;
@@ -90,4 +90,31 @@ int symbolExists(Node** headSymbolRef, Symbol* sym) {
     }
 
     return 0;
+}
+
+void updateDataAdresses(Node* symHead, int ICF) {
+    Symbol* sym;
+    while (symHead) {
+        sym = symHead->data;
+        if (sym->data) {
+            sym->address += ICF;
+        }
+
+        symHead = symHead->next;
+    }
+}
+
+Symbol* getSymbol(Node* symHead, char* name) {
+    Symbol* sym;
+
+    while (symHead) {
+        sym = symHead->data;
+        if (strMatch(sym->name, name)) {
+            return sym;
+        }
+
+        symHead = symHead->next;
+    }
+
+    return NULL;
 }
