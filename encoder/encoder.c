@@ -272,6 +272,9 @@ int encodeCmd(Command* cmd, Node** encodedList, Node** symbolTable, unsigned int
 
         encoded = encodeOperationJ(codeOp->opcode, reg, JAddress);
         bytesUsed = 4;
+    } else if (strMatch(op, "stop")) {
+        encoded = encodeOperationJ(codeOp->opcode, 0, 0);
+        bytesUsed = 4;
     }
 
     if (encoded) {
