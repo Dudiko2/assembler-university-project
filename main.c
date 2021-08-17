@@ -49,9 +49,14 @@ int main(int argc, char *argv[]) {
                 continue;
 
             if (startsWith(cmd->op, '.')) {
-                address = DC;
+                if (strMatch(cmd->op, ".extern")) {
+                    /*store extern*/
+                    storeExtern(&symbolsHead, cmd->arguments[0]);
+                } else {
+                    address = DC;
 
-                DC += encodeCmd(cmd, &dataImageHead, NULL, DC);
+                    DC += encodeCmd(cmd, &dataImageHead, NULL, DC);
+                }
             } else {
                 /*encode it after due to symbols undefined yet*/
                 address = IC;
@@ -60,8 +65,9 @@ int main(int argc, char *argv[]) {
 
             /*attempt to store*/
             /*should check .entry or external before*/
-            if (strMatch(cmd->op, ".entry") || strMatch(cmd->op, ".external")) {
+            if (strMatch(cmd->op, ".entry") || strMatch(cmd->op, ".extern")) {
                 /*warning msg*/
+                printf("REPLACE THIS meaningless label for %s\n", cmd->op);
                 freeSymbol(sym);
             } else {
                 int stored = storeSymbol(&symbolsHead, sym, address);
@@ -136,7 +142,8 @@ static void printSymbolTable(Node *head) {
     printf("\nSYMBOLS:\n");
     while (curr) {
         sym = curr->data;
-        printf("%5d | %s\n", sym->address, sym->name);
+        printf("%5d | %10s | %s", sym->address, sym->name, sym->external ? "extern" : "");
+        printf("\n");
 
         curr = curr->next;
     }

@@ -118,3 +118,30 @@ Symbol* getSymbol(Node* symHead, char* name) {
 
     return NULL;
 }
+
+int storeExtern(Node** headSymbolRef, char* label) {
+    Symbol* sym;
+    Symbol* alreadyDefined = NULL;
+
+    /*ignore if extern symbol exists, error if not extern*/
+    alreadyDefined = getSymbol(*headSymbolRef, label);
+    if (alreadyDefined) {
+        if (alreadyDefined->data || alreadyDefined->code || !(alreadyDefined->external)) {
+            printErrorMessage(NO_EXTERN_SYMBOL_EXISTS, label);
+            return 0;
+        }
+
+        return 1;
+    }
+
+    sym = newSymbol();
+    if (!sym)
+        return 0;
+
+    sym->name = newStringCopy(label);
+    sym->external = 1;
+    sym->address = 0;
+
+    insertInfront(headSymbolRef, sym);
+    return 1;
+}

@@ -250,7 +250,7 @@ static int matchArgsToFormat(char **args, char *format) {
 
         if ((formatArg == 'n' && isNumber(arg, 1)) ||
             (formatArg == 'r' && isRegister(arg)) ||
-            (formatArg == 'l' && validLabelChars(arg, strlen(arg))) ||
+            (formatArg == 'l' && validLabelChars(arg, strlen(arg)) && !isKeyword(arg) && strlen(arg) <= LABEL_MAX_LEN) ||
             (formatArg == 's' && isString(arg))) {
             j++;
         } else {

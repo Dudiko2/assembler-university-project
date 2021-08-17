@@ -29,4 +29,6 @@ void updateDataAdresses(Node* symHead, int ICF);
 
 Symbol* getSymbol(Node* symHead, char* name);
 
+int storeExtern(Node** headSymbolRef, char* label);
+
 #endif

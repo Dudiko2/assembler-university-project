@@ -37,7 +37,9 @@ int* toBinArray(long int num, int bits, int useTwosComp) {
     } while (num && i >= bound);
 
     if (num) {
-        /*msg : doesn't fit*/
+        char s[MAX_BITS + 1];
+        sprintf(s, "%d", bits - bound);
+        printErrorMessage(NUM_EXCEEDS_BIN, s);
         free(bin);
         return NULL;
     }
@@ -256,7 +258,8 @@ int encodeCmd(Command* cmd, Node** encodedList, Node** symbolTable, unsigned int
 
         encoded = encodeOperationJ(codeOp->opcode, reg, JAddress);
         bytesUsed = 4;
-    } else if (strMatch(op, "la")) {
+    } else if (strMatch(op, "la") ||
+               strMatch(op, "call")) {
         reg = 0;
         sym = getSymbol(*symbolTable, args[0]);
 

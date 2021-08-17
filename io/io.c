@@ -102,6 +102,15 @@ void printErrorMessage(errorCode msgType, char *str) {
             strcpy(errMsg, "Undefined symbol %s");
             break;
 
+        case NO_EXTERN_SYMBOL_EXISTS:
+            strcpy(errMsg, "Invalid use of .extern. Symbol '%s' already defined as a non-external symbol");
+            showLineNum = 1;
+            break;
+
+        case NUM_EXCEEDS_BIN:
+            strcpy(errMsg, "Value too large to be stored in %s bit binary number");
+            break;
+
         default:
             break;
     }
