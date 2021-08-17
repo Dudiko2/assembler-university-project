@@ -123,7 +123,6 @@ int storeExtern(Node** headSymbolRef, char* label) {
     Symbol* sym;
     Symbol* alreadyDefined = NULL;
 
-    /*ignore if extern symbol exists, error if not extern*/
     alreadyDefined = getSymbol(*headSymbolRef, label);
     if (alreadyDefined) {
         if (alreadyDefined->data || alreadyDefined->code || !(alreadyDefined->external)) {
@@ -131,6 +130,7 @@ int storeExtern(Node** headSymbolRef, char* label) {
             return 0;
         }
 
+        /*symbol was defined and is external*/
         return 1;
     }
 
@@ -143,5 +143,24 @@ int storeExtern(Node** headSymbolRef, char* label) {
     sym->address = 0;
 
     insertInfront(headSymbolRef, sym);
+    return 1;
+}
+
+int setEntry(Node* headSymbol, char* label) {
+    Symbol* sym = NULL;
+
+    sym = getSymbol(headSymbol, label);
+    if (!sym) {
+        printErrorMessage(INVALID_ENTRY_NO_SYMBOL, label);
+        return 0;
+    }
+
+    if (sym->external) {
+        printErrorMessage(INVALID_ENTRY_SYMBOL_EXTERN, label);
+        return 0;
+    }
+
+    sym->entry = 1;
+
     return 1;
 }

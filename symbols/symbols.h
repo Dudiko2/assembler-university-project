@@ -31,4 +31,6 @@ Symbol* getSymbol(Node* symHead, char* name);
 
 int storeExtern(Node** headSymbolRef, char* label);
 
+int setEntry(Node* headSymbol, char* label);
+
 #endif

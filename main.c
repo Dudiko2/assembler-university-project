@@ -48,15 +48,17 @@ int main(int argc, char *argv[]) {
             if (!cmd)
                 continue;
 
-            if (startsWith(cmd->op, '.')) {
-                if (strMatch(cmd->op, ".extern")) {
-                    /*store extern*/
-                    storeExtern(&symbolsHead, cmd->arguments[0]);
-                } else {
-                    address = DC;
+            if (strMatch(cmd->op, ".extern")) {
+                /*store extern*/
+                int stored = storeExtern(&symbolsHead, cmd->arguments[0]);
 
-                    DC += encodeCmd(cmd, &dataImageHead, NULL, DC);
-                }
+                if (!stored)
+                    continue;
+            } else if (startsWith(cmd->op, '.')) {
+                address = DC;
+
+                DC += encodeCmd(cmd, &dataImageHead, NULL, DC);
+
             } else {
                 /*encode it after due to symbols undefined yet*/
                 address = IC;
@@ -93,8 +95,9 @@ int main(int argc, char *argv[]) {
             Command *cmd = currCmd->data;
             if (!startsWith(cmd->op, '.')) {
                 IC += encodeCmd(cmd, &codeImageHead, &symbolsHead, IC);
-            } else {
+            } else if (strMatch(cmd->op, ".entry")) {
                 /*set entries*/
+                setEntry(symbolsHead, cmd->arguments[0]);
             }
 
             currCmd = currCmd->next;
@@ -142,7 +145,7 @@ static void printSymbolTable(Node *head) {
     printf("\nSYMBOLS:\n");
     while (curr) {
         sym = curr->data;
-        printf("%5d | %10s | %s", sym->address, sym->name, sym->external ? "extern" : "");
+        printf("%5d | %10s | %s%s", sym->address, sym->name, sym->external ? "external" : "", sym->entry ? "entry" : "");
         printf("\n");
 
         curr = curr->next;

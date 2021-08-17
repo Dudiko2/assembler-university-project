@@ -103,12 +103,20 @@ void printErrorMessage(errorCode msgType, char *str) {
             break;
 
         case NO_EXTERN_SYMBOL_EXISTS:
-            strcpy(errMsg, "Invalid use of .extern. Symbol '%s' already defined as a non-external symbol");
+            strcpy(errMsg, "Invalid use of '.extern'. Symbol '%s' already defined as a non-external symbol");
             showLineNum = 1;
             break;
 
         case NUM_EXCEEDS_BIN:
             strcpy(errMsg, "Value too large to be stored in %s bit binary number");
+            break;
+
+        case INVALID_ENTRY_NO_SYMBOL:
+            strcpy(errMsg, "Invalid use of '.entry'. Symbol '%s' is undefined");
+            break;
+
+        case INVALID_ENTRY_SYMBOL_EXTERN:
+            strcpy(errMsg, "Invalid use of '.entry'. Symbol '%s' is external");
             break;
 
         default:
