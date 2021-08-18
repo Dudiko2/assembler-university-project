@@ -234,6 +234,29 @@ int genEntriesFile(char *basename, Node *symbolsHead) {
     return 1;
 }
 
+int genExternalsFile(char *basename, Node *externCallsHead) {
+    ExternCall *ec;
+    FILE *out;
+    char name[256];
+
+    sprintf(name, "%s.ext", basename);
+    out = fopen(name, "w");
+    if (!out)
+        return 0;
+
+    while (externCallsHead) {
+        ec = externCallsHead->data;
+
+        fprintf(out, "%s %04d\n", ec->symName, ec->address);
+
+        externCallsHead = externCallsHead->next;
+    }
+
+    fclose(out);
+
+    return 1;
+}
+
 int shouldGenerateFiles() {
     return genFiles;
 }

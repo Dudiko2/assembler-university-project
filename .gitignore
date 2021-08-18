@@ -1,6 +1,8 @@
 *.o
 *.ob
 *.ent
+*.ext
+
 notes.md
 
 inputfiles

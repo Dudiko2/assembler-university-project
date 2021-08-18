@@ -31,10 +31,10 @@ int main(int argc, char *argv[]) {
         Node *codeImageHead = NULL;
         Node *dataImageHead = NULL;
         Node *currCmd = NULL;
+        Node *externCallsHead = NULL;
         unsigned int IC = IC_MIN;
         unsigned int DC = 0;
         int entries = 0;
-        int externals = 0;
 
         if (!srcFile) {
             /* Error, skip to the next file name */
@@ -58,11 +58,10 @@ int main(int argc, char *argv[]) {
                 if (!stored)
                     continue;
 
-                externals = 1;
             } else if (startsWith(cmd->op, '.')) {
                 address = DC;
 
-                DC += encodeCmd(cmd, &dataImageHead, NULL, DC);
+                DC += encodeCmd(cmd, &dataImageHead, NULL, NULL, DC);
 
             } else {
                 /*encode it after due to symbols undefined yet*/
@@ -96,7 +95,7 @@ int main(int argc, char *argv[]) {
             /*encode commands*/
             Command *cmd = currCmd->data;
             if (!startsWith(cmd->op, '.')) {
-                IC += encodeCmd(cmd, &codeImageHead, &symbolsHead, IC);
+                IC += encodeCmd(cmd, &codeImageHead, &symbolsHead, &externCallsHead, IC);
             } else if (strMatch(cmd->op, ".entry")) {
                 /*set entries*/
                 int success = setEntry(symbolsHead, cmd->arguments[0]);
@@ -115,6 +114,10 @@ int main(int argc, char *argv[]) {
             if (entries) {
                 genEntriesFile(fileBasename, symbolsHead);
             }
+
+            if (externCallsHead) {
+                genExternalsFile(fileBasename, externCallsHead);
+            }
         }
 
         /*print for debug*/
@@ -128,6 +131,7 @@ int main(int argc, char *argv[]) {
         closeSourceFile();
         freeSymbolList(symbolsHead);
         freeCommandList(commandsHead);
+        freeExternCallsList(externCallsHead);
         freeListShallow(dataImageHead);
         freeListShallow(codeImageHead);
         free(fileBasename);

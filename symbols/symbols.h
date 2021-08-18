@@ -13,6 +13,11 @@ typedef struct symbol {
     unsigned int external : 1;
 } Symbol;
 
+typedef struct ExternCall {
+    char* symName;
+    unsigned int address;
+} ExternCall;
+
 Symbol* newSymbol();
 
 Symbol* symbolFromCommand(Command* cmd);
@@ -32,5 +37,11 @@ Symbol* getSymbol(Node* symHead, char* name);
 int storeExtern(Node** headSymbolRef, char* label);
 
 int setEntry(Node* headSymbol, char* label);
+
+int storeExternCall(Node** externalCalls, char* name, unsigned int address);
+
+void freeExternCall(void* ptr);
+
+void freeExternCallsList(Node* head);
 
 #endif

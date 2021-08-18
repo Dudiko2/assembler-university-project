@@ -162,7 +162,7 @@ int binNegative(int* binArr) {
     return binArr[0];
 }
 
-int encodeCmd(Command* cmd, Node** encodedList, Node** symbolTable, unsigned int address) {
+int encodeCmd(Command* cmd, Node** encodedList, Node** symbolTable, Node** externCalls, unsigned int address) {
     char* op = cmd->op;
     char** args = cmd->arguments;
     int bytesUsed = 0;
@@ -225,6 +225,11 @@ int encodeCmd(Command* cmd, Node** encodedList, Node** symbolTable, unsigned int
         if (sym) {
             immed = (sym->address) - address;
 
+            if (sym->external) {
+                char* extName = newStringCopy(sym->name);
+                storeExternCall(externCalls, extName, address);
+            }
+
             encoded = encodeOperationI(codeOp->opcode, rs, rt, immed);
             bytesUsed = 4;
         } else {
@@ -255,6 +260,11 @@ int encodeCmd(Command* cmd, Node** encodedList, Node** symbolTable, unsigned int
                 return 0;
             }
 
+            if (sym->external) {
+                char* extName = newStringCopy(sym->name);
+                storeExternCall(externCalls, extName, address);
+            }
+
             JAddress = sym->address;
         }
 
@@ -268,6 +278,11 @@ int encodeCmd(Command* cmd, Node** encodedList, Node** symbolTable, unsigned int
         if (!sym) {
             printErrorMessage(SYMBOL_DOES_NOT_EXIST, args[0]);
             return 0;
+        }
+
+        if (sym->external) {
+            char* extName = newStringCopy(sym->name);
+            storeExternCall(externCalls, extName, address);
         }
 
         JAddress = sym->address;

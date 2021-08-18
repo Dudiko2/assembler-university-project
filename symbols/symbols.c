@@ -164,3 +164,34 @@ int setEntry(Node* headSymbol, char* label) {
 
     return 1;
 }
+
+int storeExternCall(Node** externalCalls, char* name, unsigned int address) {
+    ExternCall* ec;
+
+    if (!name) {
+        return 0;
+    }
+
+    ec = malloc(sizeof(ExternCall));
+
+    ec->symName = name;
+    ec->address = address;
+
+    insertLast(externalCalls, ec);
+
+    return 1;
+}
+
+void freeExternCall(void* ptr) {
+    ExternCall* ec = ptr;
+
+    if (!ec)
+        return;
+
+    free(ec->symName);
+    free(ec);
+}
+
+void freeExternCallsList(Node* head) {
+    freeListWithFunc(head, freeExternCall);
+}

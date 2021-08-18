@@ -47,6 +47,8 @@ int genObjectFile(char *basename, Node *codeImageHead, Node *dataImageHead, int 
 
 int genEntriesFile(char *basename, Node *symbolsHead);
 
+int genExternalsFile(char *basename, Node *externCallsHead);
+
 int shouldGenerateFiles();
 
 #endif
