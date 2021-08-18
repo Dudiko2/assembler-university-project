@@ -226,8 +226,7 @@ int encodeCmd(Command* cmd, Node** encodedList, Node** symbolTable, Node** exter
             immed = (sym->address) - address;
 
             if (sym->external) {
-                char* extName = newStringCopy(sym->name);
-                storeExternCall(externCalls, extName, address);
+                storeExternCall(externCalls, sym->name, address);
             }
 
             encoded = encodeOperationI(codeOp->opcode, rs, rt, immed);
@@ -261,8 +260,7 @@ int encodeCmd(Command* cmd, Node** encodedList, Node** symbolTable, Node** exter
             }
 
             if (sym->external) {
-                char* extName = newStringCopy(sym->name);
-                storeExternCall(externCalls, extName, address);
+                storeExternCall(externCalls, sym->name, address);
             }
 
             JAddress = sym->address;
@@ -281,8 +279,7 @@ int encodeCmd(Command* cmd, Node** encodedList, Node** symbolTable, Node** exter
         }
 
         if (sym->external) {
-            char* extName = newStringCopy(sym->name);
-            storeExternCall(externCalls, extName, address);
+            storeExternCall(externCalls, sym->name, address);
         }
 
         JAddress = sym->address;

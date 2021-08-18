@@ -174,7 +174,7 @@ int storeExternCall(Node** externalCalls, char* name, unsigned int address) {
 
     ec = malloc(sizeof(ExternCall));
 
-    ec->symName = name;
+    ec->symName = newStringCopy(name);
     ec->address = address;
 
     insertLast(externalCalls, ec);

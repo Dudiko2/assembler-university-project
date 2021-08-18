@@ -52,12 +52,7 @@ int main(int argc, char *argv[]) {
                 continue;
 
             if (strMatch(cmd->op, ".extern")) {
-                /*store extern*/
-                int stored = storeExtern(&symbolsHead, cmd->arguments[0]);
-
-                if (!stored)
-                    continue;
-
+                storeExtern(&symbolsHead, cmd->arguments[0]);
             } else if (startsWith(cmd->op, '.')) {
                 address = DC;
 
