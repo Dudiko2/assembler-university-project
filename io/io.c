@@ -4,11 +4,12 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include "../encoder/encoder.h"
 #include "../globals.h"
-#include "../utils/utils.h"
 
 static unsigned long int lineNum = 0;
 static FILE *pf = NULL;
+static int genFiles = 1;
 /* Checks if an argument string has a valid extension and returns 1 (true) or 0 (false) accordingly */
 static unsigned int hasValidExtension(char *str);
 
@@ -37,7 +38,9 @@ char **getFilenamesFromArgs(int argc, char *argv[]) {
 void printErrorMessage(errorCode msgType, char *str) {
     int showLineNum = 0;
     char errMsg[100];
+
     strcpy(errMsg, "Unknown error: '%s'");
+    genFiles = 0;
 
     switch (msgType) {
         case INVALID_FNAME:
@@ -139,6 +142,7 @@ FILE *readFile(char *name) {
 
     pf = srcFile;
     lineNum = 0;
+    genFiles = 1;
 
     return srcFile;
 }
@@ -165,4 +169,30 @@ static unsigned int hasValidExtension(char *str) {
     }
 
     return (pos > -1 && strMatch(str + pos, AS_EXT_STR));
+}
+
+char *getBasename(char *name) {
+    char *copy = newStringCopy(name);
+    char *basename = calloc(strlen(name) + 1, sizeof(char));
+    int right = strlen(copy) - 1;
+    int left;
+
+    for (; right; right--) {
+        if (copy[right] == '.') {
+            copy[right] = '\0';
+            break;
+        }
+    }
+
+    for (left = right; left; left--) {
+        if (copy[left] == '/') {
+            left = left + 1;
+            break;
+        }
+    }
+
+    free(copy);
+    strncpy(basename, name + left, right - left);
+
+    return basename;
 }

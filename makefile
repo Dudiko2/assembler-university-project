@@ -16,6 +16,9 @@ clean:
 	rm -f *.o
 	rm -f */*.o
 	rm -f tester
+	rm -f *.ob
+	rm -f *.ent
+	rm -f *.ext
 
 tester: $(TESTER_OBJ) $(OBJECTS) $(HEADERS)
 	$(CC) $(FLAGS) $(TESTER_OBJ) $(OBJECTS) -o $@

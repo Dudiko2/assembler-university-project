@@ -3,6 +3,8 @@
 
 #include <stdio.h>
 
+#include "../utils/utils.h"
+
 #define AS_EXT_STR ".as"
 
 typedef enum errorCode {
@@ -38,5 +40,7 @@ FILE *readFile(char *name);
 char *readNextLine(char *line);
 
 void closeFile();
+
+char *getBasename(char *name);
 
 #endif

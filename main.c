@@ -24,13 +24,14 @@ int main(int argc, char *argv[]) {
     for (i = 0; filenames[i]; i++) {
         /* For temporary line storage */
         char line[MAX_COMMAND_LEN];
+        char *fileBasename;
         FILE *srcFile = readFile(filenames[i]);
         Node *symbolsHead = NULL;
         Node *commandsHead = NULL;
         Node *codeImageHead = NULL;
         Node *dataImageHead = NULL;
         Node *currCmd = NULL;
-        unsigned int IC = 100;
+        unsigned int IC = IC_MIN;
         unsigned int DC = 0;
 
         if (!srcFile) {
@@ -88,7 +89,7 @@ int main(int argc, char *argv[]) {
         updateDataAdresses(symbolsHead, IC);
 
         /* PHASE 2 */
-        IC = 100;
+        IC = IC_MIN;
         currCmd = commandsHead;
         while (currCmd) {
             /*encode commands*/
@@ -102,6 +103,8 @@ int main(int argc, char *argv[]) {
 
             currCmd = currCmd->next;
         }
+
+        fileBasename = getBasename(filenames[i]);
         /*Generate output files if no errors occurred*/
 
         /*print for debug*/
@@ -117,6 +120,7 @@ int main(int argc, char *argv[]) {
         freeCommandList(commandsHead);
         freeListShallow(dataImageHead);
         freeListShallow(codeImageHead);
+        free(fileBasename);
     }
 
     free(filenames);
