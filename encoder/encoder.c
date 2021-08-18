@@ -138,19 +138,21 @@ char fourbitsToHex(int* binArr, int index) {
     return res;
 }
 
-char* binToHex(int* binArr) {
-    int bits;
-    int len;
+char* byteToHex(int* binArr, int startIndex) {
+    int len = 2;
     int i;
-    char* hex;
+    int bits;
+    char* hex = calloc(len + 1, sizeof(char));
+
+    for (i = len - 1; i >= 0; i--) {
+        hex[i] = '0';
+    }
 
     bits = binLen(binArr);
-    len = bits / 4;
-
-    hex = calloc(len + 1, sizeof(char));
-
-    for (i = bits - 1; i > 0; i -= 4, len--) {
-        hex[len - 1] = fourbitsToHex(binArr, i);
+    startIndex = bits - 1 < startIndex ? bits - 1 : startIndex;
+    for (i = len - 1; i >= 0 && startIndex >= 0; i--) {
+        hex[i] = fourbitsToHex(binArr, startIndex);
+        startIndex -= 4;
     }
 
     return hex;

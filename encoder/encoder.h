@@ -52,10 +52,10 @@ converts four bits of a binary sequence, starting at index, to a hexadecimal cha
 char fourbitsToHex(int* binArr, int index);
 
 /*
-converts a binary sequence to a hexadecimal string
+converts a byte of the binArr (from right to left, starting at startIndex), into an hexdecimal char array.
 needs to be free()'d after use.
 */
-char* binToHex(int* binArr);
+char* byteToHex(int* binArr, int startIndex);
 
 int binNegative(int* binArr);
 

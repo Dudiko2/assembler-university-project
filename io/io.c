@@ -6,11 +6,13 @@
 
 #include "../encoder/encoder.h"
 #include "../globals.h"
+#include "../symbols/symbols.h"
 
 static unsigned long int lineNum = 0;
 static FILE *pf = NULL;
 static int genFiles = 1;
 /* Checks if an argument string has a valid extension and returns 1 (true) or 0 (false) accordingly */
+static int printHexFormat(FILE *stream, Node *binListHead, int counter);
 static unsigned int hasValidExtension(char *str);
 
 char **getFilenamesFromArgs(int argc, char *argv[]) {
@@ -154,21 +156,9 @@ char *readNextLine(char *line) {
     return ptr;
 }
 
-void closeFile() {
+void closeSourceFile() {
     fclose(pf);
     lineNum = 0;
-}
-
-static unsigned int hasValidExtension(char *str) {
-    int i;
-    int pos = -1; /*position of the dot, initialized as invalid*/
-
-    /*finds the last dot, if exists*/
-    for (i = 0; str[i] != '\0'; i++) {
-        if (str[i] == '.') pos = i;
-    }
-
-    return (pos > -1 && strMatch(str + pos, AS_EXT_STR));
 }
 
 char *getBasename(char *name) {
@@ -195,4 +185,95 @@ char *getBasename(char *name) {
     strncpy(basename, name + left, right - left);
 
     return basename;
+}
+
+int genObjectFile(char *basename, Node *codeImageHead, Node *dataImageHead, int ICF, int DCF) {
+    FILE *out;
+    char name[256];
+    int counter;
+
+    sprintf(name, "%s.ob", basename);
+    out = fopen(name, "w");
+    if (!out)
+        return 0;
+
+    fprintf(out, "\t%d %d", ICF - IC_MIN, DCF);
+    /*debug - remove*/
+    printf("\t%d %d", ICF - IC_MIN, DCF);
+
+    /**/
+    counter = printHexFormat(out, codeImageHead, IC_MIN);
+    printHexFormat(out, dataImageHead, counter);
+
+    fclose(out);
+
+    return 1;
+}
+
+int genEntriesFile(char *basename, Node *symbolsHead) {
+    Symbol *sym;
+    FILE *out;
+    char name[256];
+
+    sprintf(name, "%s.ent", basename);
+    out = fopen(name, "w");
+    if (!out)
+        return 0;
+
+    while (symbolsHead) {
+        sym = symbolsHead->data;
+
+        if (sym->entry)
+            fprintf(out, "%s %04d\n", sym->name, sym->address);
+
+        symbolsHead = symbolsHead->next;
+    }
+
+    fclose(out);
+
+    return 1;
+}
+
+int shouldGenerateFiles() {
+    return genFiles;
+}
+
+static unsigned int hasValidExtension(char *str) {
+    int i;
+    int pos = -1; /*position of the dot, initialized as invalid*/
+
+    /*finds the last dot, if exists*/
+    for (i = 0; str[i] != '\0'; i++) {
+        if (str[i] == '.') pos = i;
+    }
+
+    return (pos > -1 && strMatch(str + pos, AS_EXT_STR));
+}
+
+static int printHexFormat(FILE *stream, Node *binListHead, int counter) {
+    int i;
+    int j;
+    int byteStep = 8;
+    int *bin;
+    char *hex;
+
+    i = counter;
+    while (binListHead) {
+        bin = binListHead->data;
+        for (j = binLen(bin) - 1; j >= 0; j -= byteStep) {
+            if (i % 4 == 0) {
+                fprintf(stream, "\n%04d", i);
+                /*debug - remove*/
+                printf("\n%04d", i);
+            }
+            hex = byteToHex(bin, j);
+            fprintf(stream, " %s", hex);
+            printf(" %s", hex);
+            free(hex);
+            i++;
+        }
+        binListHead = binListHead->next;
+    }
+
+    return i;
 }

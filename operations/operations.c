@@ -36,12 +36,12 @@ static CodeOperation codeTable[] = {
 };
 
 static DataOperation dataTable[] = {
-    {".db", {"n+", 0}},
-    {".dw", {"n+", 0}},
-    {".dh", {"n+", 0}},
-    {".asciz", {"s", 0}},
-    {".entry", {"l", 0}},
-    {".extern", {"l", 0}},
+    {".db", {"n+"}},
+    {".dw", {"n+"}},
+    {".dh", {"n+"}},
+    {".asciz", {"s"}},
+    {".entry", {"l"}},
+    {".extern", {"l"}},
 };
 
 int isKeyword(char* str) {

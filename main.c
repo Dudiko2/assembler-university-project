@@ -33,6 +33,8 @@ int main(int argc, char *argv[]) {
         Node *currCmd = NULL;
         unsigned int IC = IC_MIN;
         unsigned int DC = 0;
+        int entries = 0;
+        int externals = 0;
 
         if (!srcFile) {
             /* Error, skip to the next file name */
@@ -55,6 +57,8 @@ int main(int argc, char *argv[]) {
 
                 if (!stored)
                     continue;
+
+                externals = 1;
             } else if (startsWith(cmd->op, '.')) {
                 address = DC;
 
@@ -68,7 +72,7 @@ int main(int argc, char *argv[]) {
 
             /*attempt to store*/
             /*should check .entry or external before*/
-            if (strMatch(cmd->op, ".entry") || strMatch(cmd->op, ".extern")) {
+            if (sym && (strMatch(cmd->op, ".entry") || strMatch(cmd->op, ".extern"))) {
                 /*warning msg*/
                 printf("REPLACE THIS meaningless label for %s\n", cmd->op);
                 freeSymbol(sym);
@@ -78,9 +82,6 @@ int main(int argc, char *argv[]) {
                 if (!stored)
                     freeSymbol(sym);
             }
-            /*
-            printCommand(cmd);
-            printf("\n");*/
 
             insertLast(&commandsHead, cmd);
         }
@@ -98,7 +99,9 @@ int main(int argc, char *argv[]) {
                 IC += encodeCmd(cmd, &codeImageHead, &symbolsHead, IC);
             } else if (strMatch(cmd->op, ".entry")) {
                 /*set entries*/
-                setEntry(symbolsHead, cmd->arguments[0]);
+                int success = setEntry(symbolsHead, cmd->arguments[0]);
+                if (success)
+                    entries = 1;
             }
 
             currCmd = currCmd->next;
@@ -106,6 +109,13 @@ int main(int argc, char *argv[]) {
 
         fileBasename = getBasename(filenames[i]);
         /*Generate output files if no errors occurred*/
+        if (shouldGenerateFiles()) {
+            genObjectFile(fileBasename, codeImageHead, dataImageHead, IC, DC);
+
+            if (entries) {
+                genEntriesFile(fileBasename, symbolsHead);
+            }
+        }
 
         /*print for debug*/
         puts("\n\ncode image\n");
@@ -115,7 +125,7 @@ int main(int argc, char *argv[]) {
         printSymbolTable(symbolsHead);
 
         /* CLEANUP */
-        closeFile();
+        closeSourceFile();
         freeSymbolList(symbolsHead);
         freeCommandList(commandsHead);
         freeListShallow(dataImageHead);

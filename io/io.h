@@ -39,8 +39,14 @@ FILE *readFile(char *name);
 
 char *readNextLine(char *line);
 
-void closeFile();
+void closeSourceFile();
 
 char *getBasename(char *name);
+
+int genObjectFile(char *basename, Node *codeImageHead, Node *dataImageHead, int ICF, int DCF);
+
+int genEntriesFile(char *basename, Node *symbolsHead);
+
+int shouldGenerateFiles();
 
 #endif
