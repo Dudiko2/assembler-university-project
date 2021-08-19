@@ -221,6 +221,7 @@ static int validateOperationArgs(Command *cmd) {
     char *op = cmd->op;
     char **args = cmd->arguments;
     char **formats = getArgFormats(op);
+    char errInfo[256] = {0};
     int i;
     int status;
 
@@ -231,7 +232,14 @@ static int validateOperationArgs(Command *cmd) {
             return 1;
     }
 
-    printErrorMessage(status, "FIX THIS!!");
+    sprintf(errInfo, "%s ", op);
+    for (i = 0; args[i]; i++) {
+        sprintf(errInfo + strlen(errInfo), "%s", args[i]);
+
+        if (args[i + 1])
+            sprintf(errInfo + strlen(errInfo), " ");
+    }
+    printErrorMessage(status, errInfo);
 
     return 0;
 }
