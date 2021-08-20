@@ -28,12 +28,21 @@ typedef struct dataOperation {
 
 /*
 returns whether STR is a reserved keyword
-TODO: add guidance commands
 */
 int isKeyword(char *str);
+
 int isCodeOperation(char *str);
+
 int isDataOperation(char *str);
+
+/*
+gets the code operation named NAME, if exists
+*/
 CodeOperation *getCodeOperation(char *name);
+
+/*
+gets the argument formats for OPNAME, if it's valid
+*/
 char **getArgFormats(char *opname);
 
 #endif

@@ -33,22 +33,35 @@ typedef enum errorCode {
 */
 char **getFilenamesFromArgs(int argc, char *argv[]);
 
+/*
+prints a error message into stderr.
+takes str as additional information (information type varies from one errorCode to another).
+notifies the module to not create output files for the current source file
+*/
 void printErrorMessage(errorCode msgType, char *str);
 
+/*reads a file*/
 FILE *readFile(char *name);
 
+/*reads next line, keeps track of line number*/
 char *readNextLine(char *line);
 
+/*closes the currently open (by readFile) source file*/
 void closeSourceFile();
 
+/*gets the name of a file minus the path and the extension*/
 char *getBasename(char *name);
 
+/*creates .ob file*/
 int genObjectFile(char *basename, Node *codeImageHead, Node *dataImageHead, int ICF, int DCF);
 
+/*creates .ent file*/
 int genEntriesFile(char *basename, Node *symbolsHead);
 
+/*creates .ext file*/
 int genExternalsFile(char *basename, Node *externCallsHead);
 
+/*returns whether or not to create output files for the currently open (by readFile) source file */
 int shouldGenerateFiles();
 
 #endif

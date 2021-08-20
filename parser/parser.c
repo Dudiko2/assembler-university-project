@@ -9,6 +9,7 @@
 #include "../operations/operations.h"
 #include "../utils/utils.h"
 
+static int mapTokenListToCmd(Command *cmd, Node *headToken);
 /*returns whether the characters in LABEL are allowed*/
 static int validLabelChars(char *label, int len);
 static int isComment(char *str);
@@ -46,7 +47,7 @@ Command *parseCommand(char *cmdStr) {
     return cmd;
 }
 
-int mapTokenListToCmd(Command *cmd, Node *headToken) {
+static int mapTokenListToCmd(Command *cmd, Node *headToken) {
     cmd->label = parseLabel(headToken->data);
 
     /*invalid label*/
@@ -221,7 +222,7 @@ static int validateOperationArgs(Command *cmd) {
     char *op = cmd->op;
     char **args = cmd->arguments;
     char **formats = getArgFormats(op);
-    char errInfo[256] = {0};
+    char errInfo[100] = {0};
     int i;
     int status;
 

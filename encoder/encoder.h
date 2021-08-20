@@ -57,6 +57,9 @@ needs to be free()'d after use.
 */
 char* byteToHex(int* binArr, int startIndex);
 
+/*
+returns whether or not the binary number stored in binArr represents a negative number
+*/
 int binNegative(int* binArr);
 
 /*

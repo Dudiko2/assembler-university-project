@@ -189,7 +189,7 @@ char *getBasename(char *name) {
 
 int genObjectFile(char *basename, Node *codeImageHead, Node *dataImageHead, int ICF, int DCF) {
     FILE *out;
-    char name[256];
+    char name[FILENAME_MAX];
     int counter;
 
     sprintf(name, "%s.ob", basename);
@@ -198,10 +198,7 @@ int genObjectFile(char *basename, Node *codeImageHead, Node *dataImageHead, int 
         return 0;
 
     fprintf(out, "\t%d %d", ICF - IC_MIN, DCF);
-    /*debug - remove*/
-    printf("\t%d %d", ICF - IC_MIN, DCF);
 
-    /**/
     counter = printHexFormat(out, codeImageHead, IC_MIN);
     printHexFormat(out, dataImageHead, counter);
 
@@ -213,7 +210,7 @@ int genObjectFile(char *basename, Node *codeImageHead, Node *dataImageHead, int 
 int genEntriesFile(char *basename, Node *symbolsHead) {
     Symbol *sym;
     FILE *out;
-    char name[256];
+    char name[FILENAME_MAX];
 
     sprintf(name, "%s.ent", basename);
     out = fopen(name, "w");
@@ -237,7 +234,7 @@ int genEntriesFile(char *basename, Node *symbolsHead) {
 int genExternalsFile(char *basename, Node *externCallsHead) {
     ExternCall *ec;
     FILE *out;
-    char name[256];
+    char name[FILENAME_MAX];
 
     sprintf(name, "%s.ext", basename);
     out = fopen(name, "w");
@@ -286,12 +283,9 @@ static int printHexFormat(FILE *stream, Node *binListHead, int counter) {
         for (j = binLen(bin) - 1; j >= 0; j -= byteStep) {
             if (i % 4 == 0) {
                 fprintf(stream, "\n%04d", i);
-                /*debug - remove*/
-                printf("\n%04d", i);
             }
             hex = byteToHex(bin, j);
             fprintf(stream, " %s", hex);
-            printf(" %s", hex);
             free(hex);
             i++;
         }

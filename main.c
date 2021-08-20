@@ -68,7 +68,7 @@ int main(int argc, char *argv[]) {
             /*should check .entry or external before*/
             if (sym && (strMatch(cmd->op, ".entry") || strMatch(cmd->op, ".extern"))) {
                 /*warning msg*/
-                printf("REPLACE THIS meaningless label for %s\n", cmd->op);
+                printf("Label '%s' has no effect in %s and it will not be saved\n", sym->name, cmd->op);
                 freeSymbol(sym);
             } else {
                 int stored = storeSymbol(&symbolsHead, sym, address);
@@ -115,12 +115,13 @@ int main(int argc, char *argv[]) {
             }
         }
 
-        /*print for debug*/
+        /*
         puts("\n\ncode image\n");
         printBinList(codeImageHead);
         puts("\n\ndata image\n");
         printBinList(dataImageHead);
         printSymbolTable(symbolsHead);
+        */
 
         /* CLEANUP */
         closeSourceFile();

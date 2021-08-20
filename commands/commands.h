@@ -21,6 +21,9 @@ void freeCommand(void *ptr);
 
 void printCommand(Command *cmd);
 
+/*
+frees an entire linked list of Commands
+*/
 void freeCommandList(Node *head);
 
 #endif
