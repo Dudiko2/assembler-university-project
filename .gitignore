@@ -2,6 +2,7 @@
 *.ob
 *.ent
 *.ext
+*.as
 
 notes.md
 

@@ -49,5 +49,6 @@ void printCommand(Command *cmd) {
 }
 
 void freeCommandList(Node *head) {
-    freeListWithFunc(head, freeCommand);
+    if (head)
+        freeListWithFunc(head, freeCommand);
 }

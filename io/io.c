@@ -113,6 +113,7 @@ void printErrorMessage(errorCode msgType, char *str) {
             break;
 
         case NUM_EXCEEDS_BIN:
+            /*write better message*/
             strcpy(errMsg, "Value too large to be stored in %s bit binary number");
             break;
 

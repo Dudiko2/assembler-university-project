@@ -12,6 +12,7 @@ static Node* encodeStringSave(char* ascizStr, int* bytesUsed);
 static Node* encodeOperationR(int opcode, int funct, int rs, int rt, int rd);
 static Node* encodeOperationI(int opcode, int rs, int rt, int immed);
 static Node* encodeOperationJ(int opcode, int reg, unsigned int address);
+static int minBin(int* binArr);
 
 int* toBinArray(long int num, int bits, int useTwosComp) {
     int remainder;
@@ -34,9 +35,13 @@ int* toBinArray(long int num, int bits, int useTwosComp) {
         num /= 2;
         bin[i] = remainder;
         i--;
-    } while (num && i >= bound);
+    } while (num && i >= 0);
 
-    if (num) {
+    /*
+    the long expression checks if the value to be stored is too large within an n-bit number that uses two's comp.
+    */
+    if (num ||
+        (useTwosComp && bin[0] && (positive || (!positive && !minBin(bin))))) {
         char s[MAX_BITS + 1];
         sprintf(s, "%d", bits - bound);
         printErrorMessage(NUM_EXCEEDS_BIN, s);
@@ -333,7 +338,7 @@ static Node* encodeStringSave(char* ascizStr, int* bytesUsed) {
     int c;
     int byte = 8;
 
-    for (i = 1; (c = ascizStr[i]) != '\"'; i++) {
+    for (i = 1; ascizStr[i + 1] != 0 && (c = ascizStr[i]) != '\"'; i++) {
         bin = toBinArray(c, byte, 0);
 
         if (!bin) {
@@ -514,4 +519,18 @@ static Node* encodeOperationJ(int opcode, int reg, unsigned int address) {
     free(binAddress);
 
     return nodify(bin);
+}
+
+static int minBin(int* binArr) {
+    int i;
+
+    if (binArr[0] == 0)
+        return 0;
+
+    for (i = 1; binArr[i] != -1; i++) {
+        if (binArr[i])
+            return 0;
+    }
+
+    return 1;
 }

@@ -173,11 +173,11 @@ char **parseArgumentList(Node *token) {
     while (curr != NULL) {
         temp = newStringCopy(curr->data);
 
-        if (i == argsLen) {
+        if (i == argsLen - 1) {
             int j;
 
             argsLen += ARGS_LEN;
-            arguments = realloc(arguments, argsLen * sizeof(char *));
+            arguments = realloc(arguments, (argsLen + 1) * sizeof(char *));
             for (j = i; j < argsLen; j++) {
                 arguments[j] = '\0';
             }
@@ -215,7 +215,7 @@ static int isComment(char *str) {
 }
 
 static int isString(char *str) {
-    return startsWith(str, '\"') && endsWith(str, '\"');
+    return (strlen(str) > 1) && startsWith(str, '\"') && endsWith(str, '\"');
 }
 
 static int validateOperationArgs(Command *cmd) {
